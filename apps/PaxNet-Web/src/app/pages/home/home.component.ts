@@ -2,6 +2,7 @@ import { transition, trigger, useAnimation } from '@angular/animations';
 import { Component } from '@angular/core';
 import { or, where } from '@angular/fire/firestore';
 import { MatDialog } from '@angular/material/dialog';
+import { Announcement } from '@shared/src';
 import { Observable, tap } from 'rxjs';
 import { ChallengeDetail, ChallengeDetailProps } from 'src/app/dialogs/challenge-detail/challenge-detail.component';
 import { CommunityWorkoutReportComponent, CommunityWorkoutReportProps } from 'src/app/dialogs/community-workout-report/community-workout-report.component';
@@ -19,6 +20,7 @@ import { StatisticsService } from 'src/app/services/statistics.service';
 import { UserAuthenticationService } from 'src/app/services/user-authentication.service';
 import { fadeIn, fadeOut } from 'src/app/utils/animations';
 import { Challenges, getChallengeIdByName } from 'src/app/utils/challenges';
+import { AnnouncementsService } from 'src/app/services/announcements.service';
 
 @Component({
   selector: 'app-home',
@@ -49,6 +51,7 @@ export class HomeComponent {
   activeChallenges: BaseChallenge[] = [];
   showChallengeBanner: boolean = false;
   loadingChallenges: boolean = true;
+  public announcements: Announcement[] = [];
 
   constructor(
     private userAuthService: UserAuthenticationService,
@@ -59,11 +62,13 @@ export class HomeComponent {
     private matDialog: MatDialog,
     private yearlyEmailService: YearInReviewEmailService,
     private statisticsService: StatisticsService,
+    private announcementsService: AnnouncementsService,
   ) {
     if (this.userAuthService.isLoggedIn) {
       this.isLoggedIn = true;
       this.getPaxFromToday();
       this.getWeeklyPaxWithAnniversaries()
+      this.getAnnouncements();
     }
     this.authUserData$ = this.userAuthService.authUserData$.pipe(
         tap(async (data) => {
@@ -249,7 +254,8 @@ export class HomeComponent {
     const paxList: GetNewPaxResponse[] = await this.paxManagerService.getNewPax();
     const latestPax: { id: string, f3Name: string, ehUserF3Name: string, ehLocationName: string, profilePhotoUrl: string | undefined}[] = [];
     for (let pax of paxList) {
-      let paxEhUser = undefined, paxEhLocation = undefined;
+      let paxEhUser = undefined;
+      let paxEhLocation = undefined;
       if (pax.ehByUserRef)
         paxEhUser = await this.paxManagerService.getPaxInfoByRef(pax.ehByUserRef);
 
@@ -259,8 +265,8 @@ export class HomeComponent {
       latestPax.push({
         id: pax.id,
         f3Name: pax.f3Name,
-        ehUserF3Name: paxEhUser !== undefined ? paxEhUser.f3Name : 'None',
-        ehLocationName: paxEhLocation !== undefined ? paxEhLocation.name : 'Unknown',
+        ehUserF3Name: paxEhUser ? paxEhUser.f3Name : 'None',
+        ehLocationName: paxEhLocation ? paxEhLocation.name : 'Unknown',
         profilePhotoUrl: pax.profilePhotoUrl
       });
     }
@@ -272,5 +278,9 @@ export class HomeComponent {
     this.anniversaryStartDate = anniversaryResponse.startDate;
     this.anniversaryEndDate = anniversaryResponse.endDate;
     this.anniversaryPax = anniversaryResponse.paxList.sort((a, b) => a.anniversaryYear < b.anniversaryYear ? 1 : -1);
+  }
+
+  async getAnnouncements() {
+    this.announcements = await this.announcementsService.getAnnouncements();
   }
 }

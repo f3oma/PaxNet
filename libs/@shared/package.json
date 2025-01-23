@@ -16,6 +16,11 @@
       "require": "./dist/src/types/Workout.js",
       "import": "./dist/src/types/Workout.mjs",
       "types": "./dist/src/types/Workout.d.ts"
+    },
+    "./src/types/Announcements": {
+      "require": "./dist/src/types/Announcements.js",
+      "import": "./dist/src/types/Announcements.mjs",
+      "types": "./dist/src/types/Announcements.d.ts"
     }
   },
   "keywords": [],
