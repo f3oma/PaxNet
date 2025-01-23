@@ -61,18 +61,23 @@
     </div>
   </div>
   <div class="side-container" *ngIf="isLoggedIn">
-    <!-- <div class="announcements">
+    <div class="announcements" *ngIf="announcements && announcements.length > 0">
       <h4>Announcements</h4>
-      <div class="announcement" @fadeInOut id="ceddy">
-        <div class="info">
-          <h5>🎄 Cousin Eddie Ruck & Can Drive</h5>
-          <p>Join us at the second annual Ruck & Can Drive. 6am Jan. 11th at Dragon's Lair</p>
+      <div class="announcement" *ngFor="let announcement of announcements" @fadeInOut [style.background-color]="announcement.backgroundColor">
+        <div class="info" [style.color]="announcement.textColor">
+          <h5>{{announcement.title}}</h5>
+          <p>{{announcement.description}}</p>
         </div>
-        <div class="action">
-          <a mat-raised-button target="_blank" href="/assets/announcements/cousin-eddie-ruck-1214.jpg">Details</a>
+        <div class="actions" *ngIf="announcement.primaryActionText" >
+          <div class="action" [style.background]="announcement.primaryActionButtonColor">
+            <a target="_blank" [href]="announcement.primaryActionUrl" [style.color]="announcement.primaryActionTextColor">{{announcement.primaryActionText}}</a>
+          </div>
+          <div class="action" *ngIf="announcement.secondaryActionText" [style.background]="announcement.secondaryActionButtonColor">
+            <a target="_blank" [href]="announcement.secondaryActionUrl" [style.color]="announcement.secondaryActionTextColor">{{announcement.secondaryActionText}}</a>
+          </div>
         </div>
       </div>
-    </div> -->
+    </div>
     <div class="new-pax" *ngIf="latestPax && latestPax.length > 0" @fadeInOut>
       <h4>New Pax</h4>
       <div class="recent-pax-list">

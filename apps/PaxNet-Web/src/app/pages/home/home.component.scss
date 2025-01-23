@@ -28,9 +28,19 @@
       color: #000;
     }
   }
-  .action {
-    a {
-      text-decoration: none;
+  .actions {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+
+    .action {
+      padding: 8px 12px;
+      border-radius: 8px;
+      a {
+        text-decoration: none;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
     }
   }
 }
@@ -398,9 +408,13 @@
         color: #000;
       }
     }
-    .action {
-      a {
-        text-decoration: none;
+    .actions {
+      flex-direction: column;
+      width: 100%;
+      .action {
+        a {
+          text-decoration: none;
+        }
       }
     }
   }
