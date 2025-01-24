@@ -14,10 +14,8 @@
                     </div>
                     <div class="actions">
                         <button class="primary-action" *ngIf="!paxChallengeData && canJoinChallenge()" mat-raised-button id="join-challenge" (click)="joinChallenge()">Join the Challenge</button>
-                        <!--Winter warrior hat venmo -->
-                        <a *ngIf="showVenmo" mat-raised-button class="primary-action venmo" target="_blank" href="https://venmo.com/u/Grady-Hastings">Venmo $20 for hat</a>
 
-                        <button mat-raised-button *ngIf="is300Challenge && paxChallengeData" class="primary-action logSingleCompletion" (click)="logSingleCompletion()" [disabled]="showLoggedState">{{showLoggedState ? 'Logged!' : 'Log Iteration'}}</button>
+                        <!-- <button mat-raised-button *ngIf="is300Challenge && paxChallengeData" class="primary-action logSingleCompletion" (click)="logSingleCompletion()" [disabled]="showLoggedState">{{showLoggedState ? 'Logged!' : 'Log Iteration'}}</button> -->
 
                         <button class="primary-action" disabled="true" *ngIf="paxChallengeData" mat-raised-button id="youre-in">You're in!</button>
                         <button *ngIf="paxChallengeData" mat-flat-button id="withdraw" (click)="withdraw()">Withdraw</button>
