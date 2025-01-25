@@ -1,5 +1,5 @@
 import { Injectable, inject } from "@angular/core";
-import { addDoc, doc, Firestore, setDoc, getDoc, CollectionReference, DocumentData, DocumentReference, DocumentSnapshot, getCountFromServer, query, deleteDoc, updateDoc, where, getDocs, or, Timestamp, and, orderBy, collection } from "@angular/fire/firestore";
+import { addDoc, doc, Firestore, setDoc, getDoc, CollectionReference, DocumentData, DocumentReference, DocumentSnapshot, getCountFromServer, query, deleteDoc, updateDoc, where, getDocs, or, Timestamp, and, orderBy, collection, QueryCompositeFilterConstraint } from "@angular/fire/firestore";
 import { AoLocationRef, UserRef, IPaxUser, PaxUser, NotificationFrequency } from "../models/users.model";
 import { PaxModelConverter } from "../utils/pax-model.converter";
 import { AOData } from "../models/ao.model";
@@ -32,13 +32,15 @@ export interface AnniversaryResponsePax {
   providedIn: 'root'
 })
 export class PaxManagerService {
-  paxConverter = this.paxModelConverter.getConverter();
-  locationConverter = this.locationModelConverter.getConverter();
   firestore: Firestore = inject(Firestore);
 
   constructor(
     private paxModelConverter: PaxModelConverter,
     private locationModelConverter: AODataConverter) { 
+  }
+
+  private get paxConverter() {
+    return this.paxModelConverter.getConverter();
   }
 
   public async addNewUser(user: Partial<IPaxUser>): Promise<DocumentReference<DocumentData>> {
@@ -50,7 +52,7 @@ export class PaxManagerService {
 
   public async refreshNewUsers(): Promise<void> {
     const today = new Date();
-    const dailyNewPaxString = today.toISOString() + "-dailynewpax";
+    const dailyNewPaxString = this.toStorableString(today) + "-dailynewpax";
     const dailyNewPaxDocRef = doc(this.firestore, 'dailynewpax_cache/' + dailyNewPaxString);
     const dailyNewPaxDoc = (await getDoc(dailyNewPaxDocRef));
     if (dailyNewPaxDoc.exists())
@@ -154,10 +156,10 @@ export class PaxManagerService {
     yesterday.setHours(0, 0, 0, 0);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    const dailyNewPaxString = today.toISOString() + "-dailynewpax";
+    const dailyNewPaxString = this.toStorableString(today) + "-dailynewpax";
     const dailyNewPaxDocRef = doc(this.firestore, 'dailynewpax_cache/' + dailyNewPaxString);
     const dailyNewPaxDoc = (await getDoc(dailyNewPaxDocRef));
-    const users = [];
+    const users: any[] = [];
     let parsed;
     if (dailyNewPaxDoc.exists()) {
       const data = dailyNewPaxDoc.data();
@@ -171,12 +173,13 @@ export class PaxManagerService {
     }
 
     for (let pax of parsed) {
-      let ehByUserRef = null, ehLocationRef = null;
+      let ehByUserRef: UserRef = null, ehLocationRef: AoLocationRef = null;
       if (pax.ehByUserRefPath) {
         ehByUserRef = this.getUserReference(pax.ehByUserRefPath);
       }
-      if (pax.ehLocationRefPath)
+      if (pax.ehLocationRefPath) {
         ehLocationRef = this.getLocationReference(pax.ehLocationRefPath);
+      }
       users.push({
         id: pax.id,
         f3Name: pax.f3Name,
@@ -186,6 +189,10 @@ export class PaxManagerService {
       });
     }
     return users;
+  }
+
+  private toStorableString(date: Date) {
+    return `${date.getMonth() + 1}-${date.getDate() + 1}-${date.getFullYear()}`;
   }
 
   // Only Refs
@@ -214,7 +221,7 @@ export class PaxManagerService {
     const weekStartDate = new Date(today.setDate(firstDay));
     const weekEndDate = new Date(today.setDate(weekStartDate.getDate()+6));
 
-    const anniversaryString = weekStartDate.toISOString() + "-anniversaries";
+    const anniversaryString = this.toStorableString(weekStartDate) + "-anniversaries";
     const weeklyAnniversaryDocRef = doc(this.firestore, 'anniversaries_cache/' + anniversaryString);
     const weeklyAnniversaryDoc = (await getDoc(weeklyAnniversaryDocRef));
     if (weeklyAnniversaryDoc.exists()) {
@@ -222,6 +229,7 @@ export class PaxManagerService {
       const jsonString = data['jsonString'];
       return JSON.parse(jsonString);
     } else {
+      console.log("HERE");
       const anniversaries = await this.calculateAnniversaries(weekStartDate, weekEndDate);
       const anniversariesStringed = JSON.stringify(anniversaries);
       await setDoc(weeklyAnniversaryDocRef, { jsonString: anniversariesStringed });
@@ -256,8 +264,8 @@ export class PaxManagerService {
   private async calculateAnniversaries(weekStartDate: Date, weekEndDate: Date): Promise<AnniversaryResponse> {
     const dates = this.getAnniversaryDates(weekStartDate);
     const userCollection: CollectionReference = collection(this.firestore, 'users').withConverter(this.paxConverter);
-    let queryFilter1 = [];
-    let queryFilter2 = [];
+    let queryFilter1: QueryCompositeFilterConstraint[] = [];
+    let queryFilter2: QueryCompositeFilterConstraint[] = [];
     for (let date of dates) {
       const statement = and(where("joinDate", ">=", date.startTime), where("joinDate", "<", date.endTime));
       if (queryFilter1.length < 24) {
@@ -298,7 +306,7 @@ export class PaxManagerService {
   }
 
   private getAnniversaryDates(weekStartDate: Date): { startTime: Date, endTime: Date }[] {
-    const dates = [];
+    const dates: Date[] = [];
     for (let i = 0; i < 7; i++) {
       const nextDay = new Date();
       nextDay.setDate(weekStartDate.getDate() + i);
