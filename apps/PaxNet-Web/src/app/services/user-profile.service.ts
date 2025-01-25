@@ -137,16 +137,29 @@ export class UserProfileService {
     }
 
     async updateAchievementFormat(achievement: Achievement, userId: string) {
+        if (achievement.challengeInfoId) {
+            return;
+        }
+
         const docRef = doc(this.userProfileCollection, userId);
         await updateDoc(docRef, {
             achievements: arrayRemove(achievement)
         });
-        if (achievement.imageSrc && achievement.text == "Summer Murph Challenge 2024")
+
+        // Field is removed
+        if (achievement.imageSrc)
         {
-            achievement.name = Challenges.SummerMurph2024;
-            achievement.text = Challenges.SummerMurph2024;
             delete achievement.imageSrc;
         }
+
+        if (achievement.text == "Summer Murph Challenge - 2024") {
+            achievement.challengeInfoId = "aI66pjf8m5wq5FBjGh4j";
+        } else if (achievement.text === "Winter Warrior Challenge - 2024") {
+            achievement.challengeInfoId = "N7vPPQBYKo3irbzhjaHw";
+        } else if (achievement.text === "300x300 Challenge - 2024") {
+            achievement.challengeInfoId = "iVJUt1cvLpE0mmigwo4s";
+        }
+
         // Add it back...
         await this.addAchievementToProfile(achievement, userId);
         console.log(achievement);

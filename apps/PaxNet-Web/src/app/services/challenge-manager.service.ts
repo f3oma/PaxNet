@@ -68,8 +68,8 @@ export class ChallengeManager {
     async completeChallenge(challenge: BaseChallenge) {
         if (challenge.isComplete()) {
             challenge.updateState(ChallengeState.Completed);
-            // Give user badge...
-            const achievement = getCompletedAchievementForChallenge(challenge.name);
+            const challengeInfo = await this.getChallengeInformation(challenge.challengeInfoId);
+            const achievement = getCompletedAchievementForChallenge(challengeInfo);
             if (achievement) {
                 await this.userProfileService.addAchievementToProfile(achievement, challenge.paxUser.id);
             }    
@@ -89,8 +89,8 @@ export class ChallengeManager {
         return docs;
     }
 
-    async getAllChallengeParticipants(challengeName: Challenges) {
-        const q = query(this.UserChallengeCollection, and(where("name", "==", challengeName.toString())));
+    async getAllChallengeParticipants(challengeId: string): Promise<BaseChallenge[]> {
+        const q = query(this.UserChallengeCollection, and(where("challengeInfoId", "==", challengeId)));
         const docs = Promise.all((await getDocs<Promise<BaseChallenge>, DocumentData>(q)).docs.map((d) => d.data()));
         return docs;
     }

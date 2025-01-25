@@ -49,7 +49,7 @@
       <div class="active-challenges" *ngIf="hasClaimedData && activeChallenges.length > 0" @fadeInOut>
         <h4 class="activeChallenges-header">Active Challenges</h4>
         <div class="challenges">
-          <div class="challenge" *ngFor="let challenge of activeChallenges" [routerLink]="['/challenges/', challenge.name]">
+          <div class="challenge" *ngFor="let challenge of activeChallenges" [routerLink]="['/challenges/', challenge.challengeInfoId]">
             <h5>{{challenge.name}}</h5>
             <ng-container *ngIf="isIterativeCompletionChallenge(challenge)">
               <p *ngIf="challenge.state === 'pre-registered'">Pre-registered</p>

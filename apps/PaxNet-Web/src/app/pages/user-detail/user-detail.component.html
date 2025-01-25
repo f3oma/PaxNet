@@ -37,7 +37,7 @@
         <div class="section-header">Achievements</div>
         <div class="achievement-list">
           <div class="achievement" *ngFor="let achievement of userProfileData.achievements">
-            <div class="achievement-image" [matTooltip]="achievement.text" [style.background-image]="'url(' + getAchievementImage(achievement.name) + ')'"></div>
+            <div class="achievement-image" [matTooltip]="achievement.text" [style.background-image]="'url(' + getAchievementImage(achievement.challengeInfoId) + ')'"></div>
           </div>
         </div>
       </div>
