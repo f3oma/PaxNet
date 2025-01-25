@@ -111,8 +111,8 @@ export class UserDetailComponent {
     }
   }
 
-  public getAchievementImage(challengeName: string) {
-    return getChallengeImageByName(challengeName);
+  public getAchievementImage(challengeInfoId: string) {
+    return getChallengeImageByName(challengeInfoId);
   }
 
   private determineIfIsUsersProfile(userId: string) {
@@ -137,9 +137,7 @@ export class UserDetailComponent {
     var profileData = await this.userProfileService.getOrCreateUserProfileById(userId);
     if (profileData && profileData.achievements) {
       for (let achievement of profileData.achievements) {
-        if (achievement.imageSrc) {
-          await this.userProfileService.updateAchievementFormat(achievement, userId);
-        }
+        await this.userProfileService.updateAchievementFormat(achievement, userId);
       }
     }
     this.userProfileData = profileData;

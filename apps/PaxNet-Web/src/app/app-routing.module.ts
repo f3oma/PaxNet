@@ -98,7 +98,7 @@ const routes: Routes = [
     canActivate: [BasicAuthenticatedAuthGuard]
   },
   {
-    path: 'challenges/:name',
+    path: 'challenges/:id',
     component: ChallengeViewComponent,
     canActivate: [BasicAuthenticatedAuthGuard]
   },

@@ -56,7 +56,8 @@ export interface ChallengeDetailProps {
                 endDateTime: new Date(this.challenge.endDateString),
                 name: this.challenge.name,
                 totalToComplete: completionRequirements.totalCompletionsRequired,
-                activeCompletions: 0
+                activeCompletions: 0,
+                challengeInfoId: this.challenge.id!
             });
             await this.challengeManager.startChallenge(iterativeChallenge);
             this.showCompleteMessage = true;
@@ -79,7 +80,8 @@ export interface ChallengeDetailProps {
                 endDateTime: new Date(this.challenge.endDateString),
                 name: this.challenge.name,
                 totalToComplete: completionRequirements.totalCompletionsRequired,
-                activeCompletions: 0
+                activeCompletions: 0,
+                challengeInfoId: this.challenge.id!
             });
             await this.challengeManager.startChallenge(iterativeChallenge);
             this.showCompleteMessage = true;

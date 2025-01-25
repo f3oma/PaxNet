@@ -40,6 +40,7 @@ export class UserChallengeConverter {
             startDateString: data.startDateString,
             endDateString: data.endDateString,
             endDateTime: Timestamp.fromDate(data.endDateTime ?? new Date(data.endDateString)),
+            challengeInfoId: data.challengeInfoId,
         };
         if (data instanceof IterativeCompletionChallenge) {
             return <IIterativeCompletionChallengeEntity> {
@@ -80,6 +81,7 @@ export class UserChallengeConverter {
                     endDateTime: data.endDateTime?.toDate() ?? new Date(data.endDateString),
                     activeCompletions: iterativeEntity.activeCompletions,
                     totalToComplete: iterativeEntity.totalToComplete,
+                    challengeInfoId: data.challengeInfoId,
                 });
             case ChallengeType.UserSelectedGoal:
                 const userSelectedGoalEntity = data as IUserSelectedGoalChallengeEntity;
@@ -93,10 +95,11 @@ export class UserChallengeConverter {
                     endDateString: data.endDateString,
                     endDateTime: data.endDateTime?.toDate() ?? new Date(data.endDateString),
                     goal: userSelectedGoalEntity.goal,
-                    currentValue: userSelectedGoalEntity.currentValue
+                    currentValue: userSelectedGoalEntity.currentValue,
+                    challengeInfoId: data.challengeInfoId
                 });
             default:
-                return new BaseChallenge(id, paxUser, data.name, data.type, data.state, data.startDateString, data.endDateString, data.endDateTime?.toDate() ?? new Date(data.endDateString));
+                return new BaseChallenge(id, paxUser, data.name, data.type, data.state, data.startDateString, data.endDateString, data.endDateTime?.toDate() ?? new Date(data.endDateString), data.challengeInfoId);
         }
     }
 }

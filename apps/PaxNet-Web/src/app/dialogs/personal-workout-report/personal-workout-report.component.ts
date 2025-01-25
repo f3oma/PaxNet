@@ -74,7 +74,7 @@ export class PersonalWorkoutReportComponent {
     this.user = data.user;
     this.activeChallenges = data.activeChallenges;
     for (let challenge of data.activeChallenges) {
-      if (challenge.name === Challenges.PreRuckRunChallenge && new Date(challenge.startDateString) < new Date()) {
+      if (challenge.challengeInfoId === Challenges.PreRuckRunChallenge && new Date(challenge.startDateString) < new Date()) {
         this.showPreRunRuckChallengeField = true;
       }
     }
@@ -113,14 +113,14 @@ export class PersonalWorkoutReportComponent {
       for (let challenge of this.activeChallenges) {
 
         // Do we have an active challenge
-        if (challenge.name === Challenges.WinterWarrior2024 && new Date(challenge.startDateString) < new Date()) {
+        if (challenge.challengeInfoId === Challenges.WinterWarrior2024 && new Date(challenge.startDateString) < new Date()) {
           const feelsLike: number | undefined = await this.weatherService.getFeelsLikeForDate(workoutData.date);
           if (feelsLike && feelsLike <= 20) {
             await winterWarriorChallengeHelper(challenge, this.challengeManager);
           }
         }
 
-        if (challenge.name === Challenges.PreRuckRunChallenge && new Date(challenge.startDateString) < new Date()) {
+        if (challenge.challengeInfoId === Challenges.PreRuckRunChallenge && new Date(challenge.startDateString) < new Date()) {
           const completedTotal = this.getNumberOfMilesPreRan();
           console.log(completedTotal);
           await preRunRuckChallengeHelper(challenge, completedTotal, this.challengeManager);

@@ -120,7 +120,6 @@ export class WorkoutManagerService {
     }
 
     private async tryCreatePersonalWorkoutForUserRef(workoutReport: UserReportedWorkout, userRef: DocumentReference<PaxUser>): Promise<void> {
-
         // Three records to add / update
         // First we need to see if the workout is already reported, create it if not.
         // If not created, we need to update the yearly attendance count for the user.

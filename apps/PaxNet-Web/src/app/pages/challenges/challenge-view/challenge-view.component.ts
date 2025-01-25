@@ -55,7 +55,7 @@ export class ChallengeViewComponent implements OnInit {
     private route: ActivatedRoute,
     private matDialog: MatDialog) {
       this.authUserData$ = this.userAuthService.authUserData$.pipe(
-        tap(async (data) => {
+        tap(async (data: any) => {
             const paxDataId = data?.paxDataId;
             if (paxDataId && paxDataId !== undefined) {
                 await this.getPaxUserData(paxDataId);
@@ -65,15 +65,9 @@ export class ChallengeViewComponent implements OnInit {
   }
 
   async ngOnInit() {
-    const name = this.route.snapshot.paramMap.get('name');
-    if (name !== null) {
-      const challenge = getChallengesEnumKeyByValue(name);
-      if (challenge !== undefined) {
-        await this.getChallengeData(challenge);
-        return;
-      }
-    }
-    this.showChallengeNotFoundError = true;
+    const id = this.route.snapshot.paramMap.get('id');
+    await this.getChallengeData(id);
+
   }
 
   async getPaxUserData(id: string) {
@@ -108,7 +102,8 @@ export class ChallengeViewComponent implements OnInit {
             endDateTime: new Date(this.challengeInformation.endDateString),
             name: this.challengeInformation.name,
             totalToComplete: completionRequirements.totalCompletionsRequired,
-            activeCompletions: 0
+            activeCompletions: 0,
+            challengeInfoId: this.challengeInformation.id!,
         });
     } else if (this.challengeInformation?.type === ChallengeType.BestAttempt) {
       challenge = new BestAttemptChallenge({
@@ -120,14 +115,15 @@ export class ChallengeViewComponent implements OnInit {
         endDateString: this.challengeInformation.endDateString,
         endDateTime: new Date(this.challengeInformation.endDateString),
         name: this.challengeInformation.name,
-        bestAttempt: 0
+        bestAttempt: 0,
+        challengeInfoId: this.challengeInformation.id!,
       }); 
     } else if (this.challengeInformation?.type === ChallengeType.UserSelectedGoal) {
       let goal = 0;
 
       const result: SetPersonalGoalDialogResult = await this.matDialog.open(SetPersonalGoalDialog, {
         data: <SetPersonalGoalDialogProps> {
-          goalOptions: getUserSelectedGoalOptionsByName(this.challengeInformation.name)
+          goalOptions: getUserSelectedGoalOptionsByName(this.challengeInformation.id)
         },
         maxWidth: '100vw',
         maxHeight: '100vh',
@@ -152,7 +148,8 @@ export class ChallengeViewComponent implements OnInit {
         endDateTime: new Date(this.challengeInformation.endDateString),
         name: this.challengeInformation.name,
         goal: goal,
-        currentValue: 0
+        currentValue: 0,
+        challengeInfoId: this.challengeInformation.id!
       }); 
     }
 
@@ -190,21 +187,25 @@ export class ChallengeViewComponent implements OnInit {
     return false;
   }
 
-  async getChallengeData(challenge: Challenges) {
-    const id = getChallengeIdByName(challenge);
+  async getChallengeData(id: string | null) {
     if (!id) {
       console.error("Unknown challenge");
       return;
     }
 
-    const tableData = await this.challengeManager.getAllChallengeParticipants(challenge);
+    const challengeInformation: ChallengeInformation = await this.challengeManager.getChallengeInformation(id);
+    if (!challengeInformation) {
+      this.showChallengeNotFoundError = true;
+      this.loading = false;
+      return;
+    }
+
+    const tableData: BaseChallenge[] = await this.challengeManager.getAllChallengeParticipants(id);
     if (!tableData) {
       this.showChallengeNotFoundError = true;
     }
 
-    const challengeInformation: ChallengeInformation = await this.challengeManager.getChallengeInformation(id);
-
-    if (challenge == Challenges.WinterWarrior2024) {
+    if (challengeInformation.id == Challenges.WinterWarrior2024) {
       this.showVenmo = true;
     }
 
@@ -306,7 +307,7 @@ export class ChallengeViewComponent implements OnInit {
   }
 
   getChallengeImage(challenge: ChallengeInformation) {
-    return getChallengeImageByName(challenge.name);
+    return getChallengeImageByName(challenge.id);
   }
 
   async logSingleCompletion() {

@@ -64,7 +64,7 @@ export class PaxManagerService {
   
   public async getPaxInfoByRef(ref: UserRef) {
     if (ref === null) {
-      return;
+      return null;
     }
     const documentReference = ref.withConverter(this.paxConverter);
     return (await getDoc(documentReference)).data();

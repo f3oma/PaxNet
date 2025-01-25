@@ -110,7 +110,7 @@ export class HomeComponent {
 
     // Remove banner if already joined
     // for (let challenge of this.activeChallenges) {
-    //   if (challenge.name === Challenges.WinterWarrior2024) {
+    //   if (challenge.challengeInfoId === Challenges.WinterWarrior2024) {
     //     showChallengeBanner = false;
     //   }
     // }
@@ -160,7 +160,7 @@ export class HomeComponent {
   }
 
   async joinChallenge() {
-    const challengeId = getChallengeIdByName(Challenges.WinterWarrior2024);
+    const challengeId = Challenges.WinterWarrior2024;
     if (!challengeId) {
       console.error("Unknown challenge");
       return;

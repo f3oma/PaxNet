@@ -45,7 +45,7 @@ export class ChallengesComponent {
       this.activeUserChallenges = await this.challengeManager.getActiveChallengesForUser(id);
 
       // TODO: For any and all new challenges, this must use a linked ID
-      this.activeUserChallengesSet = new Set(this.activeUserChallenges.map((c) => c.name));
+      this.activeUserChallengesSet = new Set(this.activeUserChallenges.map((c) => c.challengeInfoId));
       await this.getActiveChallenges();
       await this.getCompletedChallenges();
       this.loading = false;
@@ -72,10 +72,10 @@ export class ChallengesComponent {
     }
 
     userIsCommittedToChallenge(challenge: ChallengeInformation) {
-      return this.activeUserChallengesSet.has(challenge.name);
+      return this.activeUserChallengesSet.has(challenge.id);
     }
 
     getChallengeImageSrc(challenge: ChallengeInformation) {
-      return getChallengeImageByName(challenge.name);
+      return getChallengeImageByName(challenge.id);
     }
 }

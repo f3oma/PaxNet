@@ -2,10 +2,10 @@ import { BaseChallenge, ChallengeState, ChallengeType, IterativeCompletionChalle
 import { ChallengeManager } from "../services/challenge-manager.service";
 
 export enum Challenges {
-    SummerMurph2024 = "Summer Murph Challenge - 2024",
-    WinterWarrior2024 = "Winter Warrior Challenge - 2024",
-    ThreeHundredChallenge = "300x300 Challenge - 2024",
-    PreRuckRunChallenge = "2025 3rd Annual Pre-Run/Ruck Challenge (aka The Griz)"
+    SummerMurph2024 = "aI66pjf8m5wq5FBjGh4j",
+    WinterWarrior2024 = "N7vPPQBYKo3irbzhjaHw",
+    ThreeHundredChallenge = "iVJUt1cvLpE0mmigwo4s",
+    PreRuckRunChallenge = "igsId7cG26YjfI8OhVre"
 }
 
 export interface ICompletionRequirements {}
@@ -56,8 +56,8 @@ export type UserSelectedGoalOptions = {
     value: number;
 }
 
-export function getUserSelectedGoalOptionsByName(challenge: Challenges): UserSelectedGoalOptions[] {
-    switch(challenge) {
+export function getUserSelectedGoalOptionsByName(challengeId: string): UserSelectedGoalOptions[] {
+    switch(challengeId) {
         case Challenges.PreRuckRunChallenge:
             return [{
                 name: "Bronze - 40mi",
@@ -91,8 +91,8 @@ export function getChallengeIdByName(challenge: Challenges): string | null  {
     }
 }
 
-export function getChallengeImageByName(challenge: string): string | null {
-    switch(challenge) {
+export function getChallengeImageByName(challengeInfoId: string): string | null {
+    switch(challengeInfoId) {
         case Challenges.SummerMurph2024:
             return "assets/images/challenges/murph-challenge-2024.png";
         case Challenges.WinterWarrior2024:
@@ -117,7 +117,7 @@ export function getChallengesEnumKeyByValue(value: string): Challenges | undefin
 
 export async function winterWarriorChallengeHelper(challenge: BaseChallenge, challengeManager: ChallengeManager) {
     if (challenge.type === ChallengeType.IterativeCompletions && 
-        challenge.name === Challenges.WinterWarrior2024 &&
+        challenge.challengeInfoId === Challenges.WinterWarrior2024 &&
         new Date(challenge.startDateString) < new Date()) {
 
         const iterativeChallenge = challenge as IterativeCompletionChallenge;
@@ -137,7 +137,7 @@ export async function winterWarriorChallengeHelper(challenge: BaseChallenge, cha
 }
 
 export async function preRunRuckChallengeHelper(challenge: BaseChallenge, completedTotal: number, challengeManager: ChallengeManager) {
-    if (challenge.type === ChallengeType.UserSelectedGoal && challenge.name === Challenges.PreRuckRunChallenge && new Date(challenge.startDateString) < new Date()) {
+    if (challenge.type === ChallengeType.UserSelectedGoal && challenge.challengeInfoId === Challenges.PreRuckRunChallenge && new Date(challenge.startDateString) < new Date()) {
         const userSelectedGoalChallenge = challenge as UserSelectedGoalChallenge;
         if (userSelectedGoalChallenge.state === ChallengeState.NotStarted || userSelectedGoalChallenge.state === ChallengeState.PreRegistered)
             userSelectedGoalChallenge.updateState(ChallengeState.InProgress);
@@ -156,7 +156,7 @@ export async function preRunRuckChallengeHelper(challenge: BaseChallenge, comple
 
 export async function threeHundredChallengeHelper(challenge: BaseChallenge, challengeManager: ChallengeManager, numberOfCompletions: number) {
     if (challenge.type === ChallengeType.IterativeCompletions && 
-        challenge.name === Challenges.ThreeHundredChallenge &&
+        challenge.challengeInfoId === Challenges.ThreeHundredChallenge &&
         new Date(challenge.startDateString) < new Date()) {
 
         const iterativeChallenge = challenge as IterativeCompletionChallenge;

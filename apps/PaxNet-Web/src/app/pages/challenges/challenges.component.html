@@ -11,7 +11,7 @@
             <div class="section">
                 <h4>My Challenges</h4>
                 <div class="user-challenges">
-                    <div class="challenge" *ngFor="let challenge of activeUserChallenges" [routerLink]="['/challenges/', challenge.name]">
+                    <div class="challenge" *ngFor="let challenge of activeUserChallenges" [routerLink]="['/challenges/', challenge.challengeInfoId]">
                       <h5>{{challenge.name}}</h5>
                       <ng-container *ngIf="isIterativeCompletionChallenge(challenge)">
                         <p *ngIf="challenge.state === 'pre-registered'">Pre-registered</p>
@@ -26,7 +26,7 @@
             <div class="section">
                 <h4>Available Challenges</h4>
                 <div class="available-challenges">
-                    <div class="available-challenge" *ngFor="let challenge of activeChallenges" [routerLink]="['/challenges/', challenge.name]">
+                    <div class="available-challenge" *ngFor="let challenge of activeChallenges" [routerLink]="['/challenges/', challenge.id]">
                         <div class="status" *ngIf="userIsCommittedToChallenge(challenge)">
                             <span id="committedBadge">Committed</span>
                         </div>
@@ -45,7 +45,7 @@
             <div class="section">
                 <h4>Previous Challenges</h4>
                 <div class="available-challenges">
-                    <div class="available-challenge" *ngFor="let challenge of completedChallenges" [routerLink]="['/challenges/', challenge.name]">
+                    <div class="available-challenge" *ngFor="let challenge of completedChallenges" [routerLink]="['/challenges/', challenge.id]">
                         <div class="image">
                             <img [src]="getChallengeImageSrc(challenge)" />
                         </div>

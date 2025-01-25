@@ -1,24 +1,14 @@
 import { Achievement } from "../models/user-profile-data.model";
-import { Challenges } from "./challenges";
+import { ChallengeInformation, Challenges } from "./challenges";
 
-export function getCompletedAchievementForChallenge(challengeName: string): Achievement | undefined {
+export function getCompletedAchievementForChallenge(challengeInfo: ChallengeInformation): Achievement | undefined {
     var completedDate = formatDate(new Date());
-    switch(challengeName) {
-        case Challenges.ThreeHundredChallenge:
-            return {
-                name: challengeName,
-                dateCompleted: completedDate,
-                text: challengeName,               
-            };
-        case Challenges.WinterWarrior2024:
-            return {
-                name: challengeName,
-                dateCompleted: completedDate,
-                text: challengeName
-            }
-        default:
-            return undefined;
-    }
+    return {
+        name: challengeInfo.name,
+        dateCompleted: completedDate,
+        text: challengeInfo.name,
+        challengeInfoId: challengeInfo.id!              
+    };
 }
 
 function formatDate(date: Date): string {

@@ -30,4 +30,5 @@ export interface Achievement {
     text: string;
     dateCompleted: string;
     imageSrc?: string;
+    challengeInfoId: string;
 }
