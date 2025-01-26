@@ -1,3 +1,15 @@
+.banner {
+    padding: 8px;
+    background-color: #ff5c5c6b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    p {
+        margin: 0;
+    }
+}
+
 .fill-container {
     width: 100%;
     height: 90%;
@@ -64,6 +76,7 @@
     }
 
     .signed-up {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         background-color: #ff5c5c6b;
         padding: 14px;
         margin: 24px 0;
