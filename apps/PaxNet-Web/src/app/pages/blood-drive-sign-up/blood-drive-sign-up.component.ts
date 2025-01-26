@@ -1,7 +1,7 @@
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { ChallengeManager } from "../../services/challenge-manager.service";
 import { UserAuthenticationService } from "../../services/user-authentication.service";
-import { AuthenticatedUser } from "../../models/authenticated-user.model";
+import { AuthenticatedUser, UserRole } from "../../models/authenticated-user.model";
 import { Observable, tap } from "rxjs";
 import { PaxManagerService } from "../../services/pax-manager.service";
 import { PaxUser } from "../../models/users.model";
@@ -15,6 +15,9 @@ import moment from "moment";
 import { fadeIn, fadeOut } from 'src/app/utils/animations';
 import { trigger, transition, useAnimation } from "@angular/animations";
 import * as XLSX from 'xlsx';
+import { BleedTimeReportDialog } from "src/app/dialogs/bleed-time-report/bleed-time-report.component";
+import { MatDialog } from "@angular/material/dialog";
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
     selector: 'blood-drive-sign-up',
@@ -31,19 +34,19 @@ export class BloodDriveSignUpComponent {
     public authUserData$: Observable<AuthenticatedUser | undefined>;
     private paxUser: PaxUser | undefined = undefined;
     public loading = true;
-    public tableData: ({
-        user: PaxUser;
+    public tableData = new MatTableDataSource<{
+        user: PaxUser | null;
         timeslot: string;
-    } | {
-        user: null;
-        timeslot: string;
-    })[] = []; // Should be blood drive sign up data
+        bleedTime?: string;
+    }>();
     @ViewChild(MatSort) sort!: MatSort;
     public userEntry: BloodDriveEntry;
     public showEventNotFound: boolean = false;
-    displayedColumns: string[] = ['timeslot', 'firstName', 'lastName', 'f3Name', 'phoneNumber'];
+    displayedColumns: string[] = ['timeslot', 'f3Name', 'firstName', 'lastName'];
     allEntries: BloodDriveEntry[];
     eventInformation: any;
+    hideSignup: boolean = false;
+    isAdminOrSiteQ: boolean = false;
 
     timeslotControl = new FormControl<string | null>(null, Validators.required);
     availableTimeslots: string[] = [];
@@ -56,7 +59,8 @@ export class BloodDriveSignUpComponent {
         private paxManagerService: PaxManagerService,
         private bloodDriveService: BloodDriveService,
         private route: ActivatedRoute,
-        private location: Location
+        private location: Location,
+        private matDialog: MatDialog
     ) {
         this.authUserData$ = this.userAuthService.authUserData$.pipe(
             tap(async (data: any) => {
@@ -64,8 +68,16 @@ export class BloodDriveSignUpComponent {
                 if (paxDataId && paxDataId !== undefined) {
                     await this.getPaxUserData(paxDataId);
                 }
+                if (data.roles.includes(UserRole.Admin) || data.roles.includes(UserRole.SiteQ)) {
+                    this.isAdminOrSiteQ = true;
+                }
             })
         );
+
+        if (this.shouldShowBleedTimeForm()) {
+            this.displayedColumns.push('bleedTime');
+            this.hideSignup = true;
+        }
     }
 
     async ngOnInit() {
@@ -91,6 +103,7 @@ export class BloodDriveSignUpComponent {
 
     private get timeSlotMaxSlotsMap() {
         const limit: Record<string, number> = {
+            'Walk-in': 999,
             '6:30': 2,
             '6:45': 2,
             '7:00': 2,
@@ -130,30 +143,60 @@ export class BloodDriveSignUpComponent {
 
         this.eventInformation = await this.bloodDriveService.getEventData(id);
         this.allEntries = await this.bloodDriveService.getAllEntriesForEvent(id);
-        var tableData: ({
-            user: PaxUser;
-            timeslot: string;
-        } | {
-            user: null;
-            timeslot: string;
-        })[] = Object.entries(this.timeSlotMaxSlotsMap).flatMap(([time, maxSlots]) => {
-            // Get users signed up for this time
-            const takenSlots = this.allEntries
-                .filter(entry => entry.timeslot === time)
-                .map(entry => entry.paxUser);
+        
+        // Handle regular timeslots
+        var tableData = Object.entries(this.timeSlotMaxSlotsMap)
+            .filter(([time]) => time !== 'Walk-in') // Filter out Walk-in from regular slots
+            .flatMap(([time, maxSlots]) => {
+                const takenSlots = this.allEntries
+                    .filter(entry => entry.timeslot === time)
+                    .map(entry => ({ user: entry.paxUser, bleedTime: entry.bleedTime }));
 
-            // Calculate empty slots based on the max slots for this time
-            const emptySlots = Array.from({ length: maxSlots - takenSlots.length }, () => ({
-                user: null
+                const emptySlots = Array.from({ length: maxSlots - takenSlots.length }, () => ({
+                    user: null,
+                    bleedTime: undefined
+                }));
+
+                return [...takenSlots.map(slot => ({ 
+                    user: slot.user, 
+                    timeslot: time, 
+                    bleedTime: slot.bleedTime 
+                })), ...emptySlots.map(() => ({ 
+                    user: null, 
+                    timeslot: time 
+                }))];
+            });
+
+        // Handle walk-ins separately - only show taken slots
+        const walkInEntries = this.allEntries
+            .filter(entry => entry.timeslot === 'Walk-in')
+            .map(entry => ({
+                user: entry.paxUser,
+                timeslot: 'Walk-in',
+                bleedTime: entry.bleedTime
             }));
 
+        // Combine regular slots with walk-ins
+        this.tableData.data = [...tableData, ...walkInEntries];
+        this.tableData.sort = this.sort;
+        
+        // Custom sort function for bleed times
+        this.tableData.sortingDataAccessor = (item: any, property: string) => {
+            switch(property) {
+                case 'bleedTime':
+                    return item.bleedTime || '99:99'; // Empty times will sort to the bottom
+                default:
+                    return item[property];
+            }
+        };
 
-            // Combine taken and empty slots
-            return [...takenSlots.map(user => ({ user, timeslot: time })), ...emptySlots.map(() => ({ user: null, timeslot: time }))];
-        });
-        this.tableData = tableData;
-        this.filterAndSortAvailableTimes(tableData);
+        this.filterAndSortAvailableTimes(this.tableData.data);
         this.loading = false;
+    }
+
+    ngAfterViewInit() {
+        // Initialize sort after view is ready
+        this.tableData.sort = this.sort;
     }
 
     filterAndSortAvailableTimes(fullTimeslotData: ({
@@ -169,6 +212,10 @@ export class BloodDriveSignUpComponent {
         const uniqueTimes = [...new Set(emptySlots.map(slot => slot.timeslot))];
         // Sort times in chronological order
         this.availableTimeslots = uniqueTimes.sort((a, b) => moment(a, 'h:mm A').diff(moment(b, 'h:mm A')));
+
+        if (this.availableTimeslots.length === 0) {
+            this.hideSignup = true;
+        }
     }
 
     async signUp() {
@@ -191,10 +238,11 @@ export class BloodDriveSignUpComponent {
         const entry = await this.bloodDriveService.addEntry(bloodDriveEntry);
         this.userEntry = entry;
 
-        const emptySlotIndex = this.tableData.findIndex(entry => entry.timeslot === timeslot && !entry.user);
+        const emptySlotIndex = this.tableData.data.findIndex(entry => entry.timeslot === timeslot && !entry.user);
         if (emptySlotIndex > -1) {
-            this.tableData[emptySlotIndex].user = bloodDriveEntry.paxUser;
-            this.tableData = [...this.tableData];
+            const newData = [...this.tableData.data];
+            newData[emptySlotIndex].user = bloodDriveEntry.paxUser;
+            this.tableData.data = newData;
         }
     }
 
@@ -207,8 +255,26 @@ export class BloodDriveSignUpComponent {
         await this.getEventInformation(this.eventInformation.id);
     }
 
+    async registerAsWalkIn() {
+        if (!this.paxUser) {
+            alert("Unable to find user");
+            return;
+        }
+
+        const bloodDriveEntry: BloodDriveEntry = {
+            id: '',
+            paxUser: this.paxUser,
+            timeslot: 'Walk-in',
+            bloodDriveId: this.eventInformation.id,
+            bleedTime: null,
+        }
+
+        await this.bloodDriveService.addEntry(bloodDriveEntry);
+        await this.getEventInformation(this.eventInformation.id);
+    }
+
     async exportToExcel() {
-        const ws: XLSX.WorkSheet=XLSX.utils.json_to_sheet(this.tableData.map((item) => {
+        const ws: XLSX.WorkSheet=XLSX.utils.json_to_sheet(this.tableData.data.map((item) => {
             return {
                 timeslot: item.timeslot,
                 firstName: item.user?.firstName || '',
@@ -222,8 +288,32 @@ export class BloodDriveSignUpComponent {
         XLSX.writeFile(wb, `${this.eventInformation.name}.xlsx`);
     }
 
-    recordBloodDrawTime() {
+    public shouldShowBleedTimeForm() {
+        if (!this.eventInformation) {
+            return false;
+        }
 
+        if (new Date() >= new Date(this.eventInformation.eventDate)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    logBleedTime() {
+        console.log(this.userEntry);
+        const ref = this.matDialog.open(BleedTimeReportDialog, {
+            data: {
+                entry: this.userEntry
+            }
+        });
+
+        ref.afterClosed().subscribe(async (res) => {
+            if (res) {
+                await this.bloodDriveService.setBleedTimeForEntry(this.userEntry.id, res.bleedTime);
+                await this.getEventInformation(this.eventInformation.id);
+            }
+        });
     }
 
     updateBloodDrawTime() {
