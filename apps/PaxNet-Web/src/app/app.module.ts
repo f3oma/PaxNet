@@ -74,6 +74,7 @@ import { UserStatsViewComponent } from './pages/user-stats-view/user-stats-view.
 import { environment } from 'src/environments/environment.prod';
 import { ThirdFComponent } from './pages/third-f/third-f.component';
 import { SetPersonalGoalDialog } from './dialogs/set-personal-goal/set-personal-goal.dialog.component';
+import { BloodDriveSignUpComponent } from './pages/blood-drive-sign-up/blood-drive-sign-up.component';
 
 @NgModule({
   declarations: [
@@ -122,7 +123,8 @@ import { SetPersonalGoalDialog } from './dialogs/set-personal-goal/set-personal-
     BeatdownCategoryChipsComponent,
     UserStatsViewComponent,
     ThirdFComponent,
-    SetPersonalGoalDialog
+    SetPersonalGoalDialog,
+    BloodDriveSignUpComponent
   ],
   imports: [
     BrowserModule,

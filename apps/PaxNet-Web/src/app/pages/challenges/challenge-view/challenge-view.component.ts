@@ -36,15 +36,11 @@ export class ChallengeViewComponent implements OnInit {
   public loading = true;
   public challengeInformation: ChallengeInformation | null = null;
   public paxChallengeData: BaseChallenge | undefined;
+  private paxUser: PaxUser | undefined = undefined;
 
   // Challenge specific
-  public is300Challenge: boolean = false;
   public showLoggedState: boolean = false;
 
-  public showVenmo: boolean = false;
-
-  private paxUser: PaxUser | undefined = undefined;
-  
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
@@ -67,13 +63,12 @@ export class ChallengeViewComponent implements OnInit {
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     await this.getChallengeData(id);
-
   }
 
   async getPaxUserData(id: string) {
     this.paxUser = await (await this.paxManagerService.getDataByAuthId(id)).data();
     if (this.challengeInformation && this.paxUser) {
-      this.paxChallengeData = await this.challengeManager.getUserChallengeData(this.challengeInformation.name, this.paxUser!.id);
+      this.paxChallengeData = await this.challengeManager.getUserChallengeData(this.challengeInformation.id, this.paxUser!.id);
       this.refreshData(this.tableData);
     }
   }
@@ -203,10 +198,6 @@ export class ChallengeViewComponent implements OnInit {
     const tableData: BaseChallenge[] = await this.challengeManager.getAllChallengeParticipants(id);
     if (!tableData) {
       this.showChallengeNotFoundError = true;
-    }
-
-    if (challengeInformation.id == Challenges.WinterWarrior2024) {
-      this.showVenmo = true;
     }
 
     // As soon as a challenge is active, set the state of all entries to in-progress

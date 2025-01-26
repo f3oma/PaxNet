@@ -95,9 +95,9 @@ export class ChallengeManager {
         return docs;
     }
 
-    async getUserChallengeData(name: Challenges, userId: string): Promise<BaseChallenge | undefined> {
+    async getUserChallengeData(id: string, userId: string): Promise<BaseChallenge | undefined> {
         const userRef = this.paxManagerService.getUserReference('users/' + userId);
-        const q = query(this.UserChallengeCollection, and(where("name", "==", name.toString()), where("paxUserRef", "==", userRef)));
+        const q = query(this.UserChallengeCollection, and(where("challengeInfoId", "==", id), where("paxUserRef", "==", userRef)));
         const docs = await (await getDocs<Promise<BaseChallenge>, DocumentData>(q)).docs.map((d) => d.data())
         if (docs && docs.length === 1) {
             return docs[0];
