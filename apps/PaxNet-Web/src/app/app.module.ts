@@ -75,6 +75,7 @@ import { environment } from 'src/environments/environment.prod';
 import { ThirdFComponent } from './pages/third-f/third-f.component';
 import { SetPersonalGoalDialog } from './dialogs/set-personal-goal/set-personal-goal.dialog.component';
 import { BloodDriveSignUpComponent } from './pages/blood-drive-sign-up/blood-drive-sign-up.component';
+import { BleedTimeReportDialog } from './dialogs/bleed-time-report/bleed-time-report.component';
 
 @NgModule({
   declarations: [
@@ -124,7 +125,8 @@ import { BloodDriveSignUpComponent } from './pages/blood-drive-sign-up/blood-dri
     UserStatsViewComponent,
     ThirdFComponent,
     SetPersonalGoalDialog,
-    BloodDriveSignUpComponent
+    BloodDriveSignUpComponent,
+    BleedTimeReportDialog
   ],
   imports: [
     BrowserModule,

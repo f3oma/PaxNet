@@ -1,0 +1,20 @@
+.title {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    mat-form-field {
+        width: 100%;
+    }
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+}

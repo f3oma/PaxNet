@@ -36,6 +36,7 @@ export class BloodDriveConverter {
             paxUserRef: userRef,
             timeslot: data.timeslot,
             bloodDriveId: data.bloodDriveId,
+            bleedTime: data.bleedTime,
         };
 
         return entity;
@@ -48,6 +49,7 @@ export class BloodDriveConverter {
             paxUser,
             timeslot: data.timeslot,
             bloodDriveId: data.bloodDriveId,
+            bleedTime: data.bleedTime,
         };
     }
 }

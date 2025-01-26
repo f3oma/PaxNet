@@ -1,0 +1,22 @@
+<h1 mat-dialog-title class="title">Report Bleed Time</h1>
+<div mat-dialog-content class="content">
+  <p>Please enter your bleed time in minutes. Example: 04:01</p>
+  <form [formGroup]="form">
+      <mat-form-field>
+        <input 
+          matInput 
+          type="text" 
+          placeholder="Bleed Time" 
+          formControlName="bleedTime"
+          pattern="^([0-9]{2}):([0-9]{2})$"
+          maxlength="5">
+        <mat-error *ngIf="form.get('bleedTime')?.errors?.['pattern']">
+          Please enter time in HH:MM format
+        </mat-error>
+      </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions class="actions">
+  <button mat-button cdkFocusInitial (click)="onSubmit()">Complete</button>
+  <button mat-button (click)="onCancel()">Cancel</button>
+</div>

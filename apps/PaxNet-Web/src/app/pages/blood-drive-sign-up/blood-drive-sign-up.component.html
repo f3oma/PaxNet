@@ -19,7 +19,7 @@
                     </div>
                 </div>
             </div>
-            <div class="sign-up" *ngIf="!userEntry">
+            <div class="sign-up" *ngIf="!userEntry && !hideSignup">
                 <div class="details">
                     <h4>Sign up</h4>
                     <p>Select an available time from the dropdown</p>
@@ -28,7 +28,6 @@
                     <mat-form-field *ngIf="!userEntry">
                         <mat-label>Select a time</mat-label>
                         <mat-select [formControl]="timeslotControl" required>
-                          <mat-option></mat-option>
                           @for (option of availableTimeslots; track option) {
                             <mat-option [value]="option">{{ option }}</mat-option>
                           }
@@ -39,20 +38,36 @@
                     </div>
                 </div>
             </div>
-            <div class="signed-up" *ngIf="userEntry">
-                <p>Thanks for registering! You are signed up for <b>{{userEntry.timeslot}}</b> on <b>{{eventInformation.eventDate}}</b>.</p>
-                <button *ngIf="userEntry" mat-flat-button id="withdraw" (click)="withdraw()">Withdraw</button>
+            <div class="sign-up-closed" *ngIf="hideSignup">
+                <p>This event has expired or spots have all been filled.</p>
+            </div>
+            <div class="signed-up" *ngIf="userEntry && !userEntry.bleedTime">
+                <p>Thanks for registering! You are signed up for <b>{{userEntry.timeslot}}</b> on <b>{{eventInformation.eventDate}}</b></p>
+                <div class="actions">
+                    <button class="primary-action" *ngIf="userEntry && shouldShowBleedTimeForm() && !userEntry.bleedTime" mat-stroked-button (click)="logBleedTime()">Log bleed time</button>
+                    <button *ngIf="userEntry && !shouldShowBleedTimeForm()" mat-flat-button id="withdraw" (click)="withdraw()">Withdraw</button>
+                </div>
+            </div>
+            <div class="completed" *ngIf="userEntry?.bleedTime">
+                <p>Completed! Thank you for donating!</p>
             </div>
             <div class="blood-drive-slots">
                 <div class="header">
                     <h5>Full sign-up sheet</h5>
-                    <button mat-icon-button (click)="exportToExcel()"><mat-icon>save_alt</mat-icon></button>
+                    <button *ngIf="isAdminOrSiteQ" mat-icon-button (click)="exportToExcel()"><mat-icon>save_alt</mat-icon></button>
                 </div>
                 <div #TABLE>
-                    <mat-table [dataSource]="tableData" class="mat-elevation-z8" >
+                    <mat-table [dataSource]="tableData" class="mat-elevation-z8" matSort matSortActive="bleedTime" matSortDirection="asc">
                         <ng-container matColumnDef="timeslot">
                             <mat-header-cell *matHeaderCellDef> Time </mat-header-cell>
                             <mat-cell *matCellDef="let element"> {{ element.timeslot }} </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="f3Name">
+                            <mat-header-cell *matHeaderCellDef> F3 Name </mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                {{ element.user?.f3Name || '' }}
+                            </mat-cell>
                         </ng-container>
     
                         <ng-container matColumnDef="firstName">
@@ -68,19 +83,12 @@
                                 {{ element.user?.lastName || '' }}
                             </mat-cell>
                         </ng-container>
-    
-                        <ng-container matColumnDef="f3Name">
-                            <mat-header-cell *matHeaderCellDef> F3 Name </mat-header-cell>
+
+                        <ng-container matColumnDef="bleedTime" *ngIf="this.shouldShowBleedTimeForm()">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header="bleedTime" start="asc"> Bleed Time </mat-header-cell>
                             <mat-cell *matCellDef="let element">
-                                {{ element.user?.f3Name || '' }}
-                            </mat-cell>∂
-                        </ng-container>
-    
-                        <ng-container matColumnDef="phoneNumber">
-                            <mat-header-cell *matHeaderCellDef> Phone number </mat-header-cell>
-                            <mat-cell *matCellDef="let element">
-                                {{ element.user?.phoneNumber.toDashedForm() || '' }}
-                            </mat-cell>∂
+                                {{ element.bleedTime || '' }}
+                            </mat-cell>
                         </ng-container>
     
                         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

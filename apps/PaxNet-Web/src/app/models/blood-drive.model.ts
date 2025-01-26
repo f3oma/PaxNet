@@ -7,12 +7,14 @@ export type BloodDriveEntry = {
     paxUser: PaxUser;
     timeslot: string;
     bloodDriveId: string;
+    bleedTime?: string; // Undefined until set by user
 }
 
 export type BloodDriveEntryEntity = {
     paxUserRef: UserRef;
     timeslot: string;
     bloodDriveId: string;
+    bleedTime?: string; // Undefined until set by user
 }
 
 export type BloodDriveEventInformation = {

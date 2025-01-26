@@ -89,6 +89,21 @@
         }
     }
 
+    .completed {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #77ff5c6b;
+        padding: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: 12px;
+        margin: 24px 0;
+
+        p {
+            margin: 0;
+        }
+    }
+
     .signed-up {
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         background-color: #ff5c5c6b;
@@ -101,6 +116,20 @@
 
         p {
             margin: 0;
+        }
+
+        .actions {
+            button {
+                margin-left: 8px;
+            }
+
+            .primary-action {
+                background-color: #ffffff;
+                color: #ff5c5c;
+                border-color: #ff5c5c;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
         }
     }
 
@@ -137,5 +166,14 @@
         mat-form-field {
             width: 100%;
         }
+    }
+
+    .signed-up {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
     }
 }
