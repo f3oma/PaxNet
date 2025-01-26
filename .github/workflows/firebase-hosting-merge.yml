@@ -24,7 +24,7 @@ jobs:
         run: npm install -g pnpm @nrwl/cli
       
       - name: Install Dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
       
       - id: 'Generate'
         working-directory: apps/PaxNet-Web
