@@ -103,6 +103,7 @@ export class BloodDriveSignUpComponent {
 
     private get timeSlotMaxSlotsMap() {
         const limit: Record<string, number> = {
+            'Walk-in': 999,
             '6:30': 2,
             '6:45': 2,
             '7:00': 2,
@@ -142,25 +143,41 @@ export class BloodDriveSignUpComponent {
 
         this.eventInformation = await this.bloodDriveService.getEventData(id);
         this.allEntries = await this.bloodDriveService.getAllEntriesForEvent(id);
-        var tableData = Object.entries(this.timeSlotMaxSlotsMap).flatMap(([time, maxSlots]) => {
-            // Get users signed up for this time
-            const takenSlots: { user: PaxUser, bleedTime?: string }[] = this.allEntries
-                .filter(entry => entry.timeslot === time)
-                .map(entry => ({ user: entry.paxUser, bleedTime: entry.bleedTime }));
+        
+        // Handle regular timeslots
+        var tableData = Object.entries(this.timeSlotMaxSlotsMap)
+            .filter(([time]) => time !== 'Walk-in') // Filter out Walk-in from regular slots
+            .flatMap(([time, maxSlots]) => {
+                const takenSlots = this.allEntries
+                    .filter(entry => entry.timeslot === time)
+                    .map(entry => ({ user: entry.paxUser, bleedTime: entry.bleedTime }));
 
-            // Calculate empty slots based on the max slots for this time
-            const emptySlots = Array.from({ length: maxSlots - takenSlots.length }, () => ({
-                user: null,
-                bleedTime: undefined
+                const emptySlots = Array.from({ length: maxSlots - takenSlots.length }, () => ({
+                    user: null,
+                    bleedTime: undefined
+                }));
+
+                return [...takenSlots.map(slot => ({ 
+                    user: slot.user, 
+                    timeslot: time, 
+                    bleedTime: slot.bleedTime 
+                })), ...emptySlots.map(() => ({ 
+                    user: null, 
+                    timeslot: time 
+                }))];
+            });
+
+        // Handle walk-ins separately - only show taken slots
+        const walkInEntries = this.allEntries
+            .filter(entry => entry.timeslot === 'Walk-in')
+            .map(entry => ({
+                user: entry.paxUser,
+                timeslot: 'Walk-in',
+                bleedTime: entry.bleedTime
             }));
 
-
-            // Combine taken and empty slots
-            return [...takenSlots.map(slot => ({ user: slot.user, timeslot: time, bleedTime: slot.bleedTime })), ...emptySlots.map(() => ({ user: null, timeslot: time }))];
-        });
-        
-        // Update how we set the table data
-        this.tableData.data = tableData;
+        // Combine regular slots with walk-ins
+        this.tableData.data = [...tableData, ...walkInEntries];
         this.tableData.sort = this.sort;
         
         // Custom sort function for bleed times
@@ -173,7 +190,7 @@ export class BloodDriveSignUpComponent {
             }
         };
 
-        this.filterAndSortAvailableTimes(tableData);
+        this.filterAndSortAvailableTimes(this.tableData.data);
         this.loading = false;
     }
 
@@ -235,6 +252,24 @@ export class BloodDriveSignUpComponent {
             return;
         }
         await this.bloodDriveService.removeEntry(this.userEntry);
+        await this.getEventInformation(this.eventInformation.id);
+    }
+
+    async registerAsWalkIn() {
+        if (!this.paxUser) {
+            alert("Unable to find user");
+            return;
+        }
+
+        const bloodDriveEntry: BloodDriveEntry = {
+            id: '',
+            paxUser: this.paxUser,
+            timeslot: 'Walk-in',
+            bloodDriveId: this.eventInformation.id,
+            bleedTime: null,
+        }
+
+        await this.bloodDriveService.addEntry(bloodDriveEntry);
         await this.getEventInformation(this.eventInformation.id);
     }
 

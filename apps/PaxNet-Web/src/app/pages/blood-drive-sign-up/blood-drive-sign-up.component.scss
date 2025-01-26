@@ -87,6 +87,15 @@
                 width: 100%;
             }
         }
+
+        .walk-in {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            p {
+                margin: 0;
+            }
+        }
     }
 
     .completed {
