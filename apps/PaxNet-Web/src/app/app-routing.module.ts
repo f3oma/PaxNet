@@ -27,6 +27,7 @@ import { ChallengesComponent } from './pages/challenges/challenges.component';
 import { ChallengeViewComponent } from './pages/challenges/challenge-view/challenge-view.component';
 import { UserStatsViewComponent } from './pages/user-stats-view/user-stats-view.component';
 import { ThirdFComponent } from './pages/third-f/third-f.component';
+import { BloodDriveSignUpComponent } from './pages/blood-drive-sign-up/blood-drive-sign-up.component';
 
 const routes: Routes = [
   {
@@ -117,6 +118,11 @@ const routes: Routes = [
         canActivate: [BasicAuthenticatedAuthGuard]
       },
     ]
+  },
+  {
+    path: 'blood-drive/:id',
+    component: BloodDriveSignUpComponent,
+    canActivate: [BasicAuthenticatedAuthGuard]
   },
   {
     path: 'fs',
