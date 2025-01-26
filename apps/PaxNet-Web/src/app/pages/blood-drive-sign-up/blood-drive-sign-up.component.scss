@@ -44,7 +44,18 @@
                 margin: 0;
             }
         }
+
+        .additional-details {
+            margin: 24px 0;
+            font-size: 16px;
+
+            p {
+                margin: 0;
+            }
+        }
     }
+
+    
     
     .sign-up {
         display: flex;
@@ -52,6 +63,7 @@
         align-items: start;
         gap: 4px;
         margin: 24px 0;
+        width: 100%;
 
         .details {
             margin-bottom: 4px;
@@ -66,11 +78,13 @@
         }
 
         .actions {
+
             button {
                 background-color: #ff5c5c;
                 color: #fff;
                 font-weight: bold;
                 text-transform: uppercase;
+                width: 100%;
             }
         }
     }
@@ -106,6 +120,22 @@
                 align-items: center;
                 justify-content: center;
             }
+        }
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    .blood-drive-data {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .form {
+        width: 100%;
+        mat-form-field {
+            width: 100%;
         }
     }
 }

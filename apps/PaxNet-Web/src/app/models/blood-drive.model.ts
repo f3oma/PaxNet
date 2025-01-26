@@ -20,4 +20,6 @@ export type BloodDriveEventInformation = {
     lastDateToRegister: string;
     name: string;
     description: string;
+    eventHost: string;
+    address: string;
 }

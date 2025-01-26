@@ -6,12 +6,17 @@
     <div class="auth" *ngIf="authUserData$ | async as authUser">
         <div class="container" *ngIf="eventInformation" @fadeInOut>
             <div class="blood-drive-data">
-                <div class="image">
-                    <img height="75px" width="75px" src="/assets/images/blood-droplet-achievement.png" />
-                </div>
                 <div class="details">
-                    <h2>{{eventInformation.name}}</h2>
+                    <div class="image">
+                        <img height="75px" width="75px" src="/assets/images/blood-droplet-achievement.png" />
+                        <h2>{{eventInformation.name}}</h2>
+                    </div>
                     <p>{{eventInformation.description}}</p>
+                    <div class="additional-details">
+                        <p><b>When:</b> {{eventInformation.eventDate}}</p>
+                        <p><b>Where:</b> {{eventInformation.eventHost}} at <a target="_blank" [href]="'https://www.google.com/maps/dir/?api=1&destination=' + eventInformation.address">{{eventInformation.address}}</a></p>
+                        <p><b>Need more information?</b> Reach out to <a target="_blank" [routerLink]="'/users/ZAYsikMIVyrF5jJVejhb'">Chernobyl</a></p>
+                    </div>
                 </div>
             </div>
             <div class="sign-up" *ngIf="!userEntry">
