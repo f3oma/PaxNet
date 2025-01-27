@@ -34,13 +34,23 @@
     gap: 6px;
 
     .action {
-      padding: 8px 12px;
-      border-radius: 8px;
+      text-decoration: none;
+      display: block;
+      padding: 8px 16px;
+      border-radius: 4px;
+      margin: 4px 0;
+      cursor: pointer;
+      text-align: center;
+
       a {
         text-decoration: none;
         text-transform: uppercase;
         font-weight: bold;
       }
+    }
+
+    .action:hover {
+      opacity: 0.9;
     }
   }
 }

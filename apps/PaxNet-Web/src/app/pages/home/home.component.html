@@ -1,4 +1,3 @@
-
 <div class="home-container">
   <div class="primary-content">
     <div class="content" *ngIf="isLoggedIn; else loggedOut">
@@ -68,13 +67,13 @@
           <h5>{{announcement.title}}</h5>
           <p>{{announcement.description}}</p>
         </div>
-        <div class="actions" *ngIf="announcement.primaryActionText" >
-          <div class="action" [style.background]="announcement.primaryActionButtonColor">
-            <a target="_blank" [href]="announcement.primaryActionUrl" [style.color]="announcement.primaryActionTextColor">{{announcement.primaryActionText}}</a>
-          </div>
-          <div class="action" *ngIf="announcement.secondaryActionText" [style.background]="announcement.secondaryActionButtonColor">
-            <a target="_blank" [href]="announcement.secondaryActionUrl" [style.color]="announcement.secondaryActionTextColor">{{announcement.secondaryActionText}}</a>
-          </div>
+        <div class="actions" *ngIf="announcement.primaryActionText">
+          <a class="action" target="_blank" [href]="announcement.primaryActionUrl" [style.background]="announcement.primaryActionButtonColor" [style.color]="announcement.primaryActionTextColor">
+            {{announcement.primaryActionText}}
+          </a>
+          <a class="action" *ngIf="announcement.secondaryActionText" target="_blank" [href]="announcement.secondaryActionUrl" [style.background]="announcement.secondaryActionButtonColor" [style.color]="announcement.secondaryActionTextColor">
+            {{announcement.secondaryActionText}}
+          </a>
         </div>
       </div>
     </div>
