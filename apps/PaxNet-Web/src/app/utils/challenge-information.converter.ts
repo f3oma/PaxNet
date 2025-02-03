@@ -33,7 +33,7 @@ export class ChallengeInformationConverter {
             type: data.type,
             startDateString: data.startDateString,
             endDateString: data.endDateString,
-            completionRequirements: data.completionRequirements,
+            completionRequirements: data.completionRequirements ?? null,
             lastDateToRegister: data.lastDateToRegister,
         };
         return entity;

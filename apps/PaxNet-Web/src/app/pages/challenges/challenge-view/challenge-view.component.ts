@@ -264,7 +264,6 @@ export class ChallengeViewComponent implements OnInit {
       });
     } else if (this.challengeInformation.type === ChallengeType.UserSelectedGoal) {
       let personalGoalsChallenge = sorted as UserSelectedGoalChallenge[];
-      console.log(personalGoalsChallenge);
       // If user is in the challenge put them first, followed by sorted completion status
       sorted = personalGoalsChallenge.sort((a, b) => {
         if (this.paxChallengeData) {
