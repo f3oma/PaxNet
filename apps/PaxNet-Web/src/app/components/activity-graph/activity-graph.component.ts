@@ -64,7 +64,6 @@ export class ActivityGraphComponent implements AfterViewInit {
   async updateRecents(beatdownAttendance: UserReportedWorkout[]) {
     const recentActivity = beatdownAttendance.slice(0, 4);
     const recentActivityList = [];
-    console.log(beatdownAttendance);
     for (let activity of recentActivity) {
 
       if (activity.activityType !== 'f3Omaha') {
