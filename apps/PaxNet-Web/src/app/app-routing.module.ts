@@ -28,6 +28,7 @@ import { ChallengeViewComponent } from './pages/challenges/challenge-view/challe
 import { UserStatsViewComponent } from './pages/user-stats-view/user-stats-view.component';
 import { ThirdFComponent } from './pages/third-f/third-f.component';
 import { BloodDriveSignUpComponent } from './pages/blood-drive-sign-up/blood-drive-sign-up.component';
+import { LogWorkoutComponent } from './pages/log-workout/log-workout.component';
 
 const routes: Routes = [
   {
@@ -122,6 +123,11 @@ const routes: Routes = [
   {
     path: 'blood-drive/:id',
     component: BloodDriveSignUpComponent,
+    canActivate: [BasicAuthenticatedAuthGuard]
+  },
+  {
+    path: 'workout',
+    component: LogWorkoutComponent,
     canActivate: [BasicAuthenticatedAuthGuard]
   },
   {

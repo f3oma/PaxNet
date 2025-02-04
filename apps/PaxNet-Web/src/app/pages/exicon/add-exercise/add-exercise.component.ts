@@ -17,6 +17,7 @@ export class AddExerciseComponent {
   form: FormGroup = new FormGroup({
     name: new FormControl('', [Validators.required]),
     description: new FormControl('', [Validators.required]),
+    category: new FormControl('', [Validators.required]),
   });
 
   constructor(private exiconService: ExiconService) {}
@@ -26,6 +27,7 @@ export class AddExerciseComponent {
       const exercise: Partial<Exercise> = {
         name: this.form.controls['name'].value,
         description: this.form.controls['description'].value,
+        category: this.form.controls['category'].value,
         submittedByF3Name: this.f3Name,
         isApproved: false
       }

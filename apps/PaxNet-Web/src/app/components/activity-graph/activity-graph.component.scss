@@ -55,7 +55,7 @@
     flex-direction: row;
     justify-content: flex-start;
     align-content: center;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
   }
     h2 {
@@ -137,6 +137,14 @@
   
   #l-3 {
     background-color: #b85f00;
+  }
+
+  .personal-activity {
+    background-color: #cde966 !important;
+  }
+
+  .personal-activity-with-other-activity {
+    background: linear-gradient(to right, #cde966, #ffa33a) !important;
   }
 
   @media only screen and (max-width: 1000px) {

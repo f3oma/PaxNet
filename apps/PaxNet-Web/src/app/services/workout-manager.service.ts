@@ -127,18 +127,24 @@ export class WorkoutManagerService {
         const userPersonalWorkoutCollection = collection(this.firestore, `users/${userRef.id}/personal_attendance`).withConverter(this.personalWorkoutConverter.getConverter());
         const yearlyAttendanceCountCollection = collection(this.firestore, `users/${userRef.id}/yearly_attendance_counts`);
 
-        const ref = doc(userPersonalWorkoutCollection, workoutReport.beatdown.id);
-        const userPersonalWorkout = await (getDoc(ref));
+        let docRef: DocumentReference<UserReportedWorkout>;
+        if(workoutReport.activityType !== 'f3Omaha') {
+            docRef = doc(userPersonalWorkoutCollection);
+        } else {
+            docRef = doc(userPersonalWorkoutCollection, workoutReport.beatdown.id);
+        }
+
+        const userPersonalWorkout = await (getDoc(docRef));
         if (userPersonalWorkout.exists()) {
             // We can just update the record, no need to update other records
-            await updateDoc(ref, {
+            await updateDoc(docRef, {
                 date: workoutReport.date,
                 preActivity: workoutReport.preActivity
             });
             return;
         } else {
             // Otherwise, create the record with the data
-            await setDoc(ref, workoutReport);
+            await setDoc(docRef, workoutReport);
         }
 
         // Now we need to update the user's attendance count
@@ -146,8 +152,13 @@ export class WorkoutManagerService {
         const yearlyCountsDoc = await (getDoc(yearlyCountsRef));
         if (yearlyCountsDoc.exists()) {
             const statsToUpdate = {
-                beatdownsAttended: increment(1),
-                preactivitiesCompleted: increment(0)
+                beatdownsAttended: increment(0),
+                preactivitiesCompleted: increment(0),
+                milesCompleted: increment(workoutReport.milesCompleted),
+                preActivityMiles: increment(workoutReport.preActivityMiles),
+            };
+            if (workoutReport.activityType === 'f3Omaha') {
+                statsToUpdate.beatdownsAttended = increment(1);
             }
             if (workoutReport.preActivity !== PreActivity.None) {
                 statsToUpdate.preactivitiesCompleted = increment(1);
@@ -155,14 +166,25 @@ export class WorkoutManagerService {
             await updateDoc(yearlyCountsRef, statsToUpdate);
         } else {
             const defaultStats = {
-                beatdownsAttended: 1,
-                preactivitiesCompleted: 0
+                beatdownsAttended: 0,
+                preactivitiesCompleted: 0,
+                milesCompleted: workoutReport.milesCompleted,
+                preActivityMiles: workoutReport.preActivityMiles,
             }
+
+            if (workoutReport.activityType === 'f3Omaha') {
+                defaultStats.beatdownsAttended = 1;
+            }
+
             if (workoutReport.preActivity !== PreActivity.None) {
                 defaultStats.preactivitiesCompleted = 1;
             }
 
             await setDoc(yearlyCountsRef, defaultStats);
+        }
+
+        if (workoutReport.activityType !== 'f3Omaha') {
+            return;
         }
 
         // Finally, update the community record with user's attendance for today.

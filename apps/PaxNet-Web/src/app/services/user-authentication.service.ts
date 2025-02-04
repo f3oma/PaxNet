@@ -10,6 +10,7 @@ import { arrayRemove, arrayUnion, updateDoc, writeBatch } from "firebase/firesto
 import { PaxManagerService } from "./pax-manager.service";
 import { AOData } from "../models/ao.model";
 import { Storage, getBlob, getBytes, ref } from '@angular/fire/storage';
+import { result } from "lodash";
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +33,18 @@ export class UserAuthenticationService {
     this.authUserCollectionRef = collection(this.firestore, 'authenticated_users').withConverter(this.authenticationUserConverter.getAuthenticationConverter());
     this.usersCollectionRef = collection(this.firestore, 'users').withConverter(this.paxConverter);
     this.watchAuthState();
+  }
+
+  public getPaxUser = async () => {
+    await this.auth.authStateReady()
+    const currentUser = this.auth.currentUser;
+    if (!currentUser) {
+      return null;
+    }
+    const docRef = doc(this.authUserCollectionRef, currentUser.uid).withConverter(this.authenticationUserConverter.getAuthenticationConverter());
+    const resultData = (await getDoc(docRef)).data();
+    const ref = doc(this.usersCollectionRef, resultData.paxDataId);
+    return await this.paxManagerService.getPaxInfoByRef(ref);
   }
 
   async watchAuthState() {

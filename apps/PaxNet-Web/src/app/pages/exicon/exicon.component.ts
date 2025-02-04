@@ -50,6 +50,10 @@ export class ExiconComponent implements OnInit {
       await this.getPaginatedExercises();
     }
 
+    public convertToId(category: string) {
+      return category.replace(/\s+/g, '-').toLowerCase();
+    }
+
     private async getPaxUserData(id: string) {
       const paxData = await (await this.paxManagerService.getDataByAuthId(id)).data();
       this.userDataSubject.next(paxData?.toProperties());

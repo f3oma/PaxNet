@@ -9,7 +9,7 @@ import { CommunityWorkoutReportComponent, CommunityWorkoutReportProps } from 'sr
 import { PersonalWorkoutReportComponent, UserReportedWorkoutProps } from 'src/app/dialogs/personal-workout-report/personal-workout-report.component';
 import { AuthenticatedUser, UserRole } from 'src/app/models/authenticated-user.model';
 import { Beatdown } from 'src/app/models/beatdown.model';
-import { BaseChallenge, ChallengeState, ChallengeType, IterativeCompletionChallenge } from 'src/app/models/user-challenge.model';
+import { BaseChallenge, ChallengeState, ChallengeType, IterativeCompletionChallenge, UserSelectedGoalChallenge } from 'src/app/models/user-challenge.model';
 import { AoLocationRef, PaxUser } from 'src/app/models/users.model';
 import { AOManagerService } from 'src/app/services/ao-manager.service';
 import { BeatdownService } from 'src/app/services/beatdown.service';
@@ -211,6 +211,10 @@ export class HomeComponent {
 
   isIterativeCompletionChallenge(challenge: BaseChallenge): challenge is IterativeCompletionChallenge {
     return (challenge as IterativeCompletionChallenge).activeCompletions !== undefined;
+  }
+
+  isUserSelectedGoalChallenge(challenge: BaseChallenge): challenge is UserSelectedGoalChallenge {
+    return (challenge as UserSelectedGoalChallenge).currentValue !== undefined;
   }
 
   reportCommunityBeatdownAttendance(beatdown: Beatdown) {

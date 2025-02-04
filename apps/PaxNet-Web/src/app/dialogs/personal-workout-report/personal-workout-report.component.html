@@ -1,8 +1,97 @@
 <div class="container">
-    <h1>Report My Attendance</h1>
-    <p>Keep track of your personal beatdown attendance</p>
+    <h1>Log a Workout</h1>
+    <p>Track your workouts</p>
     <div class="beatdown-form">
-        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center" (selectedTabChange)="changedTab($event)">
+
+        <form [formGroup]="personalWorkoutReportForm">
+            <mat-form-field appearance="outline">
+                <mat-label>Activity Type</mat-label>
+                <mat-select formControlName="activityType">
+                    <mat-option value="f3Omaha">F3 Omaha</mat-option>
+                    <mat-option value="downrange">Downrange</mat-option>
+                    <mat-option value="shieldLock">Shield Lock</mat-option>
+                    <mat-option value="personal">Personal Workout</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <ng-container *ngIf="personalWorkoutReportForm.controls['activityType'].value === 'f3Omaha'; else BeatdownManualEntry">
+                <mat-form-field appearance="outline">
+                    <mat-label>Beatdown</mat-label>
+                    <input formControlName="beatdown" autocorrect="off" [matAutocomplete]="autoBeatdown" matInput type="text" placeholder="Beatdown/AO Name/Event Name" required>
+                    <mat-autocomplete #autoBeatdown="matAutocomplete" [displayWith]="displayBeatdownOptions">
+                        <mat-option *ngFor="let option of filteredBeatdownOptions$ | async" [value]="option">
+                          {{option.date | date: 'fullDate'}} - {{option.name}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </ng-container>
+
+            <ng-template #BeatdownManualEntry>
+                <mat-form-field appearance="outline">
+                    <mat-label>Date</mat-label>
+                    <input formControlName="date" autocomplete="off" matInput [matDatepicker]="downrangePicker">
+                    <mat-hint>MM/DD/YYYY</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="downrangePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #downrangePicker></mat-datepicker>
+                </mat-form-field>
+            </ng-template>
+
+            <ng-container *ngIf="personalWorkoutReportForm.controls['activityType'].value !== 'personal'">
+                <mat-form-field appearance="outline">
+                    <mat-label>Pre-Activity</mat-label>
+                    <mat-select formControlName="preActivity" [value]="'None'">
+                        <mat-option value="None">None</mat-option>
+                        <mat-option value="Run">Pre-run</mat-option>
+                        <mat-option value="Smurph">Smurph</mat-option>
+                        <mat-option value="Murph">Murph</mat-option>
+                        <mat-option value="Ruck">Ruck</mat-option>
+                        <mat-option value="Bookclub">F3 Bookclub</mat-option>
+                        <mat-option value="Sandbags">Sandbags</mat-option>
+                        <mat-option value="Other">Other</mat-option>
+                    </mat-select>
+                </mat-form-field>
+    
+                <mat-form-field appearance="outline" *ngIf="
+                    personalWorkoutReportForm.controls['preActivity'].value === 'Run' || 
+                    personalWorkoutReportForm.controls['preActivity'].value === 'Ruck' ||
+                    personalWorkoutReportForm.controls['preActivity'].value === 'Smurph' ||
+                    personalWorkoutReportForm.controls['preActivity'].value === 'Murph'">
+                    <mat-label>Pre-Activity Miles</mat-label>
+                    <input formControlName="preActivityMiles" matInput type="number" placeholder="Number of pre-activity miles" />
+                </mat-form-field>
+            </ng-container>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Total Miles</mat-label>
+                <input formControlName="totalMiles" matInput type="number" placeholder="Number of total miles" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Workout Category</mat-label>
+                <mat-select formControlName="workoutCategory" [value]="'None'">
+                    <mat-option value="None">None</mat-option>
+                    <mat-option value="UpperBody">Upper Body</mat-option>
+                    <mat-option value="Legs">Legs</mat-option>
+                    <mat-option value="FullBody">Full Body</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <div style="margin-bottom: 12px;">
+                <label class="mat-mdc-form-field-label">Workout Difficulty</label>
+                <mat-chip-listbox formControlName="workoutDifficulty">
+                  <mat-chip-option value="easy">Simple</mat-chip-option>
+                  <mat-chip-option value="intermediate">Intermediate</mat-chip-option>
+                  <mat-chip-option value="tough">Tough</mat-chip-option>
+                </mat-chip-listbox>
+              </div>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Personal notes</mat-label>
+                <textarea formControlName="notes" autocorrect="off" autocomplete="off" matInput type="text" placeholder="How was the workout today..."></textarea>
+            </mat-form-field>
+        </form>
+
+        <!-- <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center" (selectedTabChange)="changedTab($event)">
             <mat-tab label="F3 Omaha">
                 <form class="internal-form" [formGroup]="f3OmahaForm">
                     <mat-form-field appearance="outline">
@@ -14,7 +103,6 @@
                           </mat-option>
                       </mat-autocomplete>
                     </mat-form-field>
-                    <!-- Preactivity selector -->
                     <mat-form-field appearance="outline">
                         <mat-label>Pre-Activity</mat-label>
                         <mat-select formControlName="preActivity" [value]="'None'">
@@ -115,13 +203,13 @@
                     </mat-form-field>
                 </form>
             </mat-tab>
-        </mat-tab-group>
+        </mat-tab-group> -->
     </div>
     <div class="actions">
-        <button mat-raised-button style="background-color: orange;" (click)="submit()">
+        <button class="primary" (click)="submit()">
             <span *ngIf="!userSaveLoading; else loadingSpinner">Submit</span>
         </button>
-        <button mat-flat-button (click)="userCancel()">Cancel</button>
+        <button (click)="userCancel()">Cancel</button>
     </div>
 </div>
 

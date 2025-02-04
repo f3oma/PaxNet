@@ -76,6 +76,10 @@ import { ThirdFComponent } from './pages/third-f/third-f.component';
 import { SetPersonalGoalDialog } from './dialogs/set-personal-goal/set-personal-goal.dialog.component';
 import { BloodDriveSignUpComponent } from './pages/blood-drive-sign-up/blood-drive-sign-up.component';
 import { BleedTimeReportDialog } from './dialogs/bleed-time-report/bleed-time-report.component';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatListModule } from '@angular/material/list';
+import { MatCardModule } from '@angular/material/card';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @NgModule({
   declarations: [
@@ -126,7 +130,7 @@ import { BleedTimeReportDialog } from './dialogs/bleed-time-report/bleed-time-re
     ThirdFComponent,
     SetPersonalGoalDialog,
     BloodDriveSignUpComponent,
-    BleedTimeReportDialog
+    BleedTimeReportDialog,
   ],
   imports: [
     BrowserModule,
@@ -152,7 +156,11 @@ import { BleedTimeReportDialog } from './dialogs/bleed-time-report/bleed-time-re
     MatChipsModule,
     MatTabsModule,
     MatTooltipModule,
-    HttpClientModule
+    HttpClientModule,
+    MatButtonToggleModule,
+    MatListModule,
+    MatCardModule,
+    NgxChartsModule
   ],
   providers: [
     provideFirebaseApp(() => initializeApp(environment.firebase)),

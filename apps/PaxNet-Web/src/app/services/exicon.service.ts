@@ -26,7 +26,23 @@ export class ExiconService {
 
     const docs = await getDocs(q);
     this.lastItem = docs.docs[docs.docs.length - 1] ?? null;
-    return docs.docs.map(d => d.data() as Exercise);
+    return docs.docs
+      .map(d => {
+        const ex = d.data() as Exercise;
+        ex.category = this.convertToUIString(ex.category);
+        return ex;
+      });
+  }
+
+  private convertToUIString(category: string) {
+    switch (category) {
+      case "core": return "Core";
+      case "arms": return "Arms";
+      case "legs": return "Legs";
+      case "warm-up": return "Warm-Up";
+      case "compound": return "Compound";
+      default: return "Unknown";
+    }
   }
 
   async getUnapprovedExercises() {
@@ -68,7 +84,8 @@ export class ExiconService {
     const ref = doc(this.exerciseCollection, `${exercise.id}`);
     return await updateDoc(ref, {
       name: exercise.name,
-      description: exercise.description
+      description: exercise.description,
+      category: exercise.category
     });
   }
 }

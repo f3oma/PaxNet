@@ -4,4 +4,5 @@ export interface Exercise {
     description: string;
     submittedByF3Name: string;
     isApproved: boolean;
+    category?: string; // Undefined for back-compatability
 }

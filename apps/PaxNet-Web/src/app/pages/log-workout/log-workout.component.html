@@ -1,26 +1,61 @@
 <div class="container">
-    <h1>Record a Workout</h1>
-    <p>Track your personal & F3 workouts</p>
+    <div class="section-header">
+        <div class="page-title">
+            <h2>Log Workout</h2>
+            <p>Track your progress, see the leaderboard, and get some exercise inspiration.</p>
+        </div>
+        <div class="page-actions">
+            <button mat-stroked-button color="primary" (click)="logWorkout()">
+                <mat-icon>directions_run</mat-icon>
+                Log a Workout
+            </button>
+        </div>
+    </div>
+    
     <div class="main-form">
-        <!-- <form class="form" [formGroup]="form">
-            <mat-form-field appearance="outline">
-                <mat-label>Workout Date</mat-label>
-                <input formControlName="workoutDate" autocomplete="off" required matInput [(ngModel)]="workout.date" [matDatepicker]="picker">
-                <mat-hint>MM/DD/YYYY</mat-hint>
-                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-            </mat-form-field>-->
-            <!-- Personal or F3 Workout -->
-            <!-- If F3 Workout -->
-            <!-- <mat-form-field appearance="outline">
-                <mat-label>EH Location</mat-label>
-                <input formControlName="ehLocation" [(ngModel)]="selectedEhLocation" autocorrect="off" [matAutocomplete]="autoLoc" matInput type="text" placeholder="EH Location">
-                <mat-autocomplete #autoLoc="matAutocomplete" [displayWith]="displayLocationNameOptions">
-                  <mat-option *ngFor="let option of filteredLocationOptions$ | async" [value]="option">
-                    {{option.name}}
-                  </mat-option>
-                </mat-autocomplete>
-            </mat-form-field>
-        </form> -->
+        <div class="leaderboard-container">
+            <h4>Workout Leaderboard</h4>
+            <div class="filters">
+                <mat-chip-listbox hideSingleSelectionIndicator="true" [value]="selectedTimeframe" (change)="changeTimeframe($event.value)">
+                    <mat-chip-option color="primary" value="week">7 days</mat-chip-option>
+                    <mat-chip-option value="month">Month</mat-chip-option>
+                    <mat-chip-option value="year">Year</mat-chip-option>
+                  </mat-chip-listbox>
+            </div>
+            <div class="leaderboard">
+                <mat-list *ngIf="!loadingLeaderboard; else loadingSpinner">
+                    <mat-list-item *ngFor="let leader of leaderboard; let i = index">
+                        <span class="rank">{{i + 1}}</span>
+                        <span class="f3-name">{{leader.f3Name}}</span>
+                        <span class="posts">{{leader.posts}} posts</span>
+                    </mat-list-item>
+                </mat-list>
+            </div>
+        </div>
+
+        <div class="exicon">
+            <div class="exercise-list">
+                <div class="header">
+                    <h3>Featured Exercises</h3>
+                    <button mat-button class="black-btn-action" [routerLink]="['/exicon']">Full Exicon <mat-icon iconPositionEnd>chevron_right</mat-icon></button>
+                </div>
+                <mat-card *ngFor="let exercise of randomExercises">
+                    <mat-card-header class="exercise-header">
+                        <mat-card-title>{{exercise.name}}</mat-card-title>
+                        <div class="category" [id]="convertToId(exercise.category)">{{exercise.category}}</div>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p>{{exercise.description}}</p>
+                        <p>by: {{exercise.submittedByF3Name}}</p>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
     </div>
 </div>
+
+<ng-template #loadingSpinner>
+    <div class="fill-container">
+      <mat-spinner [diameter]="25"></mat-spinner>
+    </div>
+</ng-template>

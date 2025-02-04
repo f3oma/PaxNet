@@ -8,7 +8,7 @@ import { TopLeaderboardResponse, TopSiteAttendanceResponse, UserStatisticsRespon
 })
 export class StatisticsService {
 
-    private baseUrl: string = "https://statistics-service-c2it5iqhla-uc.a.run.app";
+    private baseUrl: string = "https://statisticsservice-781841010728.us-central1.run.app";
 
     constructor(private http: HttpClient) {}
 
@@ -38,5 +38,12 @@ export class StatisticsService {
         const finalUrl = this.baseUrl + fngMonths;
         const topMonths = await this.http.get(finalUrl).toPromise();
         return topMonths;
+    }
+
+    async getTop10LeaderboardByTimeframe(timeframe: 'week' | 'month' | 'year'): Promise<TopLeaderboardResponse[] | undefined> {
+        const leaderboardUrl = `/users/top-10-leaderboard/${timeframe}`;
+        const finalUrl = this.baseUrl + leaderboardUrl;
+        const leaders = await this.http.get<TopLeaderboardResponse[]>(finalUrl).toPromise();
+        return leaders.splice(0, 10); // Limit to 10
     }
 }

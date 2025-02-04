@@ -1,6 +1,7 @@
 import { formatDate } from '@angular/common';
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { PreActivity } from '@shared/src/types/Workout';
+import moment from 'moment';
 import { UserReportedWorkout, UserReportedWorkoutUI } from 'src/app/models/beatdown-attendance';
 import { Beatdown } from 'src/app/models/beatdown.model';
 import { IPaxUser } from 'src/app/models/users.model';
@@ -9,6 +10,7 @@ import { WorkoutManagerService } from 'src/app/services/workout-manager.service'
 
 export interface DailyWorkoutReported {
   countPerDay: number;
+  hadPersonalWorkout: boolean;
 }
 
 @Component({
@@ -62,7 +64,14 @@ export class ActivityGraphComponent implements AfterViewInit {
   async updateRecents(beatdownAttendance: UserReportedWorkout[]) {
     const recentActivity = beatdownAttendance.slice(0, 4);
     const recentActivityList = [];
+    console.log(beatdownAttendance);
     for (let activity of recentActivity) {
+
+      if (activity.activityType !== 'f3Omaha') {
+        recentActivityList.push(activity);
+        continue;
+      }
+
       const beatdownData = await this.beatdownService.getBeatdownDetail(activity.beatdown.id);
       if (!beatdownData)
         continue;
@@ -100,7 +109,7 @@ export class ActivityGraphComponent implements AfterViewInit {
     const dayMap = this.mapToRelativeDay(beatdownAttendance, today);
     const values = [];
     for (let entry of dayMap.values())
-      values.push({ countPerDay: entry})
+      values.push({ countPerDay: entry.countPerDay, hadPersonalWorkout: entry.hadPersonalWorkout })
 
     this.workouts = values;
   }
@@ -112,31 +121,55 @@ export class ActivityGraphComponent implements AfterViewInit {
     return differenceInDays;
   }
 
-  mapToRelativeDay(dateItems: UserReportedWorkout[], currentDate: Date): Map<number, number> {
+  mapToRelativeDay(dateItems: UserReportedWorkout[], currentDate: Date): Map<number, { countPerDay: number, hadPersonalWorkout: boolean}> {
     const monthsOut = new Date();
     monthsOut.setMonth(currentDate.getMonth() - this.monthsOut);
     monthsOut.setDate(monthsOut.getDate() - monthsOut.getDay());
     monthsOut.setHours(0, 0, 0, 0);
-    
-    let daysSinceCount = this.daysSince(monthsOut, currentDate);
+
+    const momentMonthsOut = moment(monthsOut);
+    const momentCurrentDate = moment(currentDate);
+    const daysSinceCount = momentCurrentDate.diff(momentMonthsOut, 'days');
 
     // Relative Day to Workout Value
-    const relativeDays: Map<number, number> = new Map<number, number>();
+    const relativeDays: Map<number, { countPerDay: number, hadPersonalWorkout: boolean}> = new Map<number, { countPerDay: number, hadPersonalWorkout: boolean}>();
     // Pre-load
     // +1 to include the current date as well
     for (let i = 0; i < daysSinceCount; i++) {
-      relativeDays.set(i, 0);
+      relativeDays.set(i, { countPerDay: 0, hadPersonalWorkout: false });
     }
 
     dateItems = dateItems.filter(a => a.date > monthsOut);
 
     dateItems.forEach(item => {
-      const date = new Date(item.date)
-      date.setUTCHours(0, 0, 0, 0);
-      const daysSinceDate = this.daysSince(date, currentDate);
+      const date = moment(item.date);
+      const daysSinceDate = momentCurrentDate.diff(date, 'days');      
       const relativeDay = daysSinceCount - daysSinceDate;
-      const itemValue = item.preActivity != PreActivity.None ? 2 : 1;
-      relativeDays.set(relativeDay, itemValue);
+
+      let itemCountPerDay = 0;
+      let itemHadPersonalWorkout = false;
+      // First see if we have an existing entry
+      const existingEntry = relativeDays.get(relativeDay);
+      if (existingEntry) {
+        itemCountPerDay = existingEntry.countPerDay;
+        itemHadPersonalWorkout = Boolean(existingEntry.hadPersonalWorkout);
+        if (item.preActivity != PreActivity.None) {
+          itemCountPerDay = 2;
+        }
+        if (item.activityType === 'personal' && !itemHadPersonalWorkout) {
+          itemHadPersonalWorkout = true;
+        }
+      } else {
+        itemCountPerDay = item.preActivity != PreActivity.None ? 2 : 1;
+      }
+
+      // Special cases for personal workouts
+      const hadPersonalWorkout = item.activityType === 'personal';
+      if (hadPersonalWorkout) {
+        itemHadPersonalWorkout = true;
+      }
+
+      relativeDays.set(relativeDay, { countPerDay: itemCountPerDay, hadPersonalWorkout: itemHadPersonalWorkout });
     });
 
     return relativeDays;

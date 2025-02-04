@@ -40,13 +40,13 @@
         </div>
       </div>
       <div class="upcoming-qs" *ngIf="hasClaimedData && upcomingQs.length > 0" @fadeInOut>
-        <h4 class="upcoming-qs-header">My Upcoming Q's</h4>
+        <h4 class="upcoming-qs-header">Upcoming Q's</h4>
         <ul>
             <li *ngFor="let beatdown of upcomingQs">{{beatdown.date | date: 'fullDate'}} at <b>{{beatdown.eventName ? beatdown.eventName : beatdown.aoLocation?.name }}</b></li>
         </ul>
       </div>
       <div class="active-challenges" *ngIf="hasClaimedData && activeChallenges.length > 0" @fadeInOut>
-        <h4 class="activeChallenges-header">Active Challenges</h4>
+        <h4 class="activeChallenges-header">My Challenges</h4>
         <div class="challenges">
           <div class="challenge" *ngFor="let challenge of activeChallenges" [routerLink]="['/challenges/', challenge.challengeInfoId]">
             <h5>{{challenge.name}}</h5>
@@ -54,62 +54,64 @@
               <p *ngIf="challenge.state === 'pre-registered'">Pre-registered</p>
               <p *ngIf="challenge.state === 'in-progress'">Progress: {{ challenge.activeCompletions }} / {{challenge.totalToComplete }}</p>
             </ng-container>
+            <ng-container *ngIf="isUserSelectedGoalChallenge(challenge)">
+              <p *ngIf="challenge.state === 'pre-registered'">Pre-registered</p>
+              <p *ngIf="challenge.state === 'in-progress'">Progress: {{ challenge.currentValue }} / {{challenge.goal }}</p>
+            </ng-container>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="side-container" *ngIf="isLoggedIn">
-    <div class="announcements" *ngIf="announcements && announcements.length > 0">
-      <h4>Announcements</h4>
-      <div class="announcement" *ngFor="let announcement of announcements" @fadeInOut [style.background-color]="announcement.backgroundColor">
-        <div class="info" [style.color]="announcement.textColor">
-          <h5>{{announcement.title}}</h5>
-          <p>{{announcement.description}}</p>
-        </div>
-        <div class="actions" *ngIf="announcement.primaryActionText">
-          <a class="action" target="_blank" [href]="announcement.primaryActionUrl" [style.background]="announcement.primaryActionButtonColor" [style.color]="announcement.primaryActionTextColor">
-            {{announcement.primaryActionText}}
-          </a>
-          <a class="action" *ngIf="announcement.secondaryActionText" target="_blank" [href]="announcement.secondaryActionUrl" [style.background]="announcement.secondaryActionButtonColor" [style.color]="announcement.secondaryActionTextColor">
-            {{announcement.secondaryActionText}}
-          </a>
+      <div class="announcements" *ngIf="announcements && announcements.length > 0">
+        <h4>Announcements</h4>
+        <div class="announcement" *ngFor="let announcement of announcements" @fadeInOut [style.background-color]="announcement.backgroundColor">
+          <div class="info" [style.color]="announcement.textColor">
+            <h5>{{announcement.title}}</h5>
+            <p>{{announcement.description}}</p>
+          </div>
+          <div class="actions" *ngIf="announcement.primaryActionText">
+            <a class="action" target="_blank" [href]="announcement.primaryActionUrl" [style.background]="announcement.primaryActionButtonColor" [style.color]="announcement.primaryActionTextColor">
+              {{announcement.primaryActionText}}
+            </a>
+            <a class="action" *ngIf="announcement.secondaryActionText" target="_blank" [href]="announcement.secondaryActionUrl" [style.background]="announcement.secondaryActionButtonColor" [style.color]="announcement.secondaryActionTextColor">
+              {{announcement.secondaryActionText}}
+            </a>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="new-pax" *ngIf="latestPax && latestPax.length > 0" @fadeInOut>
-      <h4>New Pax</h4>
-      <div class="recent-pax-list">
-        <div class="pax-line" *ngFor="let pax of latestPax" [routerLink]="['/users/' + pax.id]">
-          <div class="pax-data">
-            <div class="header">
-              <div *ngIf="pax.profilePhotoUrl" class="current-profile-img" [style.background-image]="'url(' + pax.profilePhotoUrl + ')'" [ngClass]="{ 'defaultBackground': !pax.profilePhotoUrl }"></div>
-              <h5>{{pax.f3Name}}</h5>
+      <div class="new-pax" *ngIf="latestPax && latestPax.length > 0" @fadeInOut>
+        <h4>New Pax</h4>
+        <div class="recent-pax-list">
+          <div class="pax-line" *ngFor="let pax of latestPax" [routerLink]="['/users/' + pax.id]">
+            <div class="pax-data">
+              <div class="header">
+                <div *ngIf="pax.profilePhotoUrl" class="current-profile-img" [style.background-image]="'url(' + pax.profilePhotoUrl + ')'" [ngClass]="{ 'defaultBackground': !pax.profilePhotoUrl }"></div>
+                <h5>{{pax.f3Name}}</h5>
+              </div>
+              <p>EH'd at: <b>{{pax.ehLocationName}}</b></p>
+              <p>EH'd by: <b>{{pax.ehUserF3Name}}</b></p>
             </div>
-            <p>EH'd at: <b>{{pax.ehLocationName}}</b></p>
-            <p>EH'd by: <b>{{pax.ehUserF3Name}}</b></p>
-          </div>
-          <div class="welcome">
-            <p id="welcome-text">WELCOME!</p>
+            <div class="welcome">
+              <p id="welcome-text">WELCOME!</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="new-pax" *ngIf="anniversaryPax && anniversaryPax.length > 0" @fadeInOut>
-      <h4>Weekly Anniversaries</h4>
-      <p class="anniversaryDate">{{anniversaryStartDate | date: "MM/dd"}} - {{anniversaryEndDate | date: "MM/dd"}}</p>
-      <div class="recent-pax-list">
-        <div class="pax-line" *ngFor="let pax of anniversaryPax" [routerLink]="['/users/' + pax.id]">
-          <div class="pax-data">
-            <div class="header">
-              <div *ngIf="pax.profilePhotoUrl" class="current-profile-img" [style.background-image]="'url(' + pax.profilePhotoUrl + ')'" [ngClass]="{ 'defaultBackground': !pax.profilePhotoUrl }"></div>
-              <h5>{{pax.f3Name}}</h5>
+      <div class="new-pax" *ngIf="anniversaryPax && anniversaryPax.length > 0" @fadeInOut>
+        <h4>Weekly Anniversaries</h4>
+        <p class="anniversaryDate">{{anniversaryStartDate | date: "MM/dd"}} - {{anniversaryEndDate | date: "MM/dd"}}</p>
+        <div class="recent-pax-list">
+          <div class="pax-line" *ngFor="let pax of anniversaryPax" [routerLink]="['/users/' + pax.id]">
+            <div class="pax-data">
+              <div class="header">
+                <div *ngIf="pax.profilePhotoUrl" class="current-profile-img" [style.background-image]="'url(' + pax.profilePhotoUrl + ')'" [ngClass]="{ 'defaultBackground': !pax.profilePhotoUrl }"></div>
+                <h5>{{pax.f3Name}}</h5>
+              </div>
+              <p>{{pax.fullName}}</p>
+              <p>Joined: {{pax.joinDate | date: 'MM-dd-YYYY'}}</p>
             </div>
-            <p>{{pax.fullName}}</p>
-            <p>Joined: {{pax.joinDate | date: 'MM-dd-YYYY'}}</p>
-          </div>
-          <div class="welcome">
-            <p id="welcome-text">{{pax.anniversaryYear}} YEAR</p>
+            <div class="welcome">
+              <p id="welcome-text">{{pax.anniversaryYear}} YEAR</p>
+            </div>
           </div>
         </div>
       </div>

@@ -162,7 +162,6 @@ export class UserProfileService {
 
         // Add it back...
         await this.addAchievementToProfile(achievement, userId);
-        console.log(achievement);
     }
 
     public async deleteUserProfile(userId: string) {
