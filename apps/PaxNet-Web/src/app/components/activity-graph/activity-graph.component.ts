@@ -80,6 +80,7 @@ export class ActivityGraphComponent implements AfterViewInit {
         beatdown: activity.beatdown,
         date: activity.date,
         beatdownDomain: beatdownData,
+        activityType: activity.activityType,
         preActivity: activity.preActivity
       });
     }

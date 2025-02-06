@@ -153,13 +153,16 @@ export class BeatdownService {
             if (workout.beatdown) {
                 const beatdownData = await this.getBeatdownDetail(workout.beatdown.id);
                 if (beatdownData) {
-                    if (beatdownData.aoName.includes('DR')) {
+                    if (beatdownData.aoName.includes('DR -')) {
                         workout.activityType = 'downrange';
                     } else if (beatdownData.aoName.includes('Shield Lock')) {
                         workout.activityType = 'shieldLock';
                     } else {
                         workout.activityType = 'f3Omaha';
                     }
+                } else {
+                    console.log(`Beatdown ${workout.beatdown.id} not found`);
+                    workout.activityType = 'shieldLock';
                 }
             }
 
