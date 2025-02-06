@@ -151,7 +151,7 @@ export class ActivityGraphComponent implements AfterViewInit {
       let itemHadPersonalWorkout = false;
       // First see if we have an existing entry
       const existingEntry = relativeDays.get(relativeDay);
-      if (existingEntry) {
+      if (existingEntry && (existingEntry.countPerDay > 0 || existingEntry.hadPersonalWorkout)) {
         itemCountPerDay = existingEntry.countPerDay;
         itemHadPersonalWorkout = Boolean(existingEntry.hadPersonalWorkout);
         if (item.preActivity != PreActivity.None) {
