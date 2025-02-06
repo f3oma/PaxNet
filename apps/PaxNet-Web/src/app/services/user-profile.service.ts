@@ -136,6 +136,23 @@ export class UserProfileService {
         });
     }
 
+    async cleanUpDuplicateAchievements(userId: string, achievements: Achievement[]) {
+        // Given a list of achievements from the user profile, remove any duplicates based on the challengeInfoId
+        // and update the profile with the new list
+        const uniqueAchievements: Achievement[] = [];
+        for (let achievement of achievements) {
+            if (uniqueAchievements.find(a => a.challengeInfoId === achievement.challengeInfoId)) {
+                continue;
+            }
+            uniqueAchievements.push(achievement);
+        }
+
+        const docRef = doc(this.userProfileCollection, userId);
+        return await updateDoc(docRef, {
+            achievements: uniqueAchievements
+        });
+    }
+
     async updateAchievementFormat(achievement: Achievement, userId: string) {
         if (achievement.challengeInfoId) {
             return;
@@ -162,7 +179,6 @@ export class UserProfileService {
 
         // Add it back...
         await this.addAchievementToProfile(achievement, userId);
-        console.log(achievement);
     }
 
     public async deleteUserProfile(userId: string) {

@@ -9,6 +9,9 @@
 
       .exercises {
         padding: 12px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
 
         .exercise {
             margin: 4px;
@@ -24,7 +27,55 @@
           }
       }
 
-}  
+}
+
+#core {
+  background-color: #8B4513; 
+  color: #fff;
+}
+
+#arms {
+  background-color: #2F4F4F;
+  color: #fff;
+}
+
+#legs {
+  background-color: #516521;
+  color: #fff;
+}
+
+#warm-up {
+  background-color: #64476d;
+  color: #fff;
+}
+
+#compound {
+  background-color: #252860;
+  color: #fff;
+}
+
+.exercise-header {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  mat-card-title {
+      font-size: 18px !important;
+      font-weight: bold;
+      margin-bottom: 0px!important;
+  }
+}
+
+.category {
+  padding: 4px 8px;
+  border-radius: 25px;
+  font-weight: bold;
+  font-size: 12px;
+  text-transform: uppercase;
+}
 
 .fill-container {
     width: 100%;

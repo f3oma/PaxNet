@@ -1,0 +1,183 @@
+::root, ::ng-deep {
+    --mat-standard-button-toggle-height: 36px !important;
+    --mdc-button-toggle-group-container-height: 36px !important;
+}
+
+::ng-deep .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+    line-height: 32px !important;
+}
+// exercise category colors
+#core {
+    background-color: #8B4513;
+    color: #fff;
+  }
+  
+  #arms {
+    background-color: #2F4F4F; 
+    color: #fff;
+  }
+  
+  #legs {
+    background-color: #516521; 
+    color: #fff;
+  }
+  
+  #warm-up {
+    background-color: #4F6D47;
+    color: #fff;
+  }
+  
+  #compound {
+    background-color: #252860; 
+    color: #fff;
+  }
+
+.exercise-header {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+
+    mat-card-title {
+        font-size: 18px !important;
+        font-weight: bold;
+        margin-bottom: 0 !important;
+    }
+}
+
+.category {
+    padding: 4px 8px;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.container {
+    padding: 16px;
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .page-title {
+            h2 {
+                font-weight: bold;
+                margin-bottom: 4px;
+            }
+            p {
+                color: #666;
+                margin-bottom: 24px;
+            }
+        }
+
+        .page-actions {
+            button {
+                color: #000;
+                background-color: #ffa600;
+            }
+        }
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+            align-items: center;
+            
+            .page-actions {
+                width: 100%;
+            }
+        }
+    }
+}
+
+.fill-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+.mat-mdc-progress-spinner { --mdc-circular-progress-active-indicator-color: rgb(255, 128, 0); }
+
+.main-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.leaderboard-container {
+    margin: 24px 0;
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    
+    h4 {
+        margin-bottom: 8px;
+        text-align: left;
+    }
+
+    .filters {
+        margin-bottom: 16px;
+        display: flex;
+        justify-content: start;
+
+        mat-button-toggle-group {
+            .mat-button-toggle-checked {
+                background-color: #ffa6005f;
+            }
+        }
+    }
+
+    .leaderboard {
+
+        mat-list-item {
+            height: 48px;
+            
+            .rank {
+                min-width: 32px;
+                font-weight: bold;
+            }
+
+            .f3-name {
+                flex: 1;
+                margin: 0 16px;
+            }
+
+            .posts {
+                color: #666;
+            }
+        }
+    }
+}
+
+.exicon {
+    .exercise-list {
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+
+            h3 {
+                margin-bottom: 0;
+            }
+        }
+        
+
+        mat-card {
+            margin-bottom: 16px;
+
+            mat-card-title {
+                font-size: 1.1em;
+            }
+
+            p {
+                margin: 8px 0 0;
+                color: #333;
+            }
+        }
+    }
+}

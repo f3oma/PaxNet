@@ -51,4 +51,37 @@
     }
 }
 
+.actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 12px;
+
+  button {
+    max-width: 150px;
+    border-radius: 25px;
+    padding: 12px 16px;
+    border: none;
+
+    &.primary {
+      background-color: #000000;
+      color: #fff;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+
+    button {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+}
+
 .mat-mdc-progress-spinner { --mdc-circular-progress-active-indicator-color: #fff; }

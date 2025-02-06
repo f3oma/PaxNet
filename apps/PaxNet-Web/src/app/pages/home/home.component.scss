@@ -7,6 +7,7 @@
   margin-bottom: 8px;
   gap: 12px;
   border-radius: 8px;
+  margin-top: 12px;
 
   .info {
     display: flex;
@@ -77,6 +78,8 @@
   justify-content: center;
   text-align: center;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 
   .challengeAnnouncement {
     background-color: #ffffff;
@@ -133,27 +136,31 @@
     }
   }
 
-  .side-container {
-    width: 100%;
-    border-top: 1px solid #ddd;
-    padding: 24px;
 
-    .new-pax, .announcements {
-      margin: 12px 0 32px 0;
+
+    .new-pax, .announcements, .upcoming-qs, .active-challenges {
+      margin: 12px 0 12px 0;
       width: 100%;
+
+      ul {
+        margin-bottom: 0;
+      }
 
       h4 {
         font-weight: 800;
         text-align: left;
         text-transform: uppercase;
         font-size: 16px;
+        margin-bottom: 0px;
       }
       .anniversaryDate {
-        font-weight: 800;
+        font-weight: 400;
         text-align: left;
         text-transform: uppercase;
-        font-size: 16px;
+        font-size: 14px;
         margin: 0;
+        font-style: italic;
+        color: #666;
       }
 
       .recent-pax-list {
@@ -162,8 +169,11 @@
         align-items: flex-start;
         justify-content: flex-start;
         width: 100%;
-        padding: 14px 0;
         gap: 4px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0px 0px 10px 0px #ddd;
+        margin-top: 12px;
       
         .pax-line {
           text-align: left;
@@ -172,14 +182,18 @@
           flex-direction: row;
           justify-content: space-between;
           align-items: center;
-          padding: 14px;
-          background-color: #eee;
+          padding: 12px;
       
           h5 {
             font-weight: bold;
+            font-size: 16px;
           }
           p {
             margin: 0;
+          }
+
+          &:not(:first-child) {
+            border-top: 1px solid #eee;
           }
         }
       
@@ -236,7 +250,7 @@
           .quick-action {
             padding: 12px 24px;
             color: #2f2f2f;
-            background-color: orange;
+            background-color: #ffa600;
             margin: 4px;
             text-wrap: nowrap;
             box-shadow: 0px 1px 4px #ddd;
@@ -270,7 +284,6 @@
       }
     }
   }
-}
 
 .header {
   display: flex;
@@ -325,10 +338,11 @@
     display: flex;
     gap: 4px;
     flex-wrap: wrap;
+    margin-top: 4px;
 
     .challenge {
-      background: linear-gradient(#fd8328, #ffa600);
-      color: #333;
+      background: #000;
+      color: #fff;
       width: fit-content;
       padding: 7px 12px;
       border-radius: 8px;

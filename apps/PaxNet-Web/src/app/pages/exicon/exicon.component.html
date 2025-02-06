@@ -7,11 +7,16 @@
 
             <button mat-flat-button style="background-color: orange;" (click)="addNewExercise()" *ngIf="!editMode">Add New</button>
             <div class="exercises" *ngIf="!editMode">
-                <div class="exercise" *ngFor="let exercise of exercises$ | async">
-                    <h4>{{exercise.name}}</h4>
-                    <p>{{exercise.description}}</p>
-                    <p>Submitted by: {{exercise.submittedByF3Name}}</p>
-                </div>
+                <mat-card *ngFor="let exercise of exercises$ | async">
+                    <mat-card-header class="exercise-header">
+                        <mat-card-title>{{exercise.name}}</mat-card-title>
+                        <div class="category" [id]="convertToId(exercise.category)">{{exercise.category}}</div>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p>{{exercise.description}}</p>
+                        <p>by: {{exercise.submittedByF3Name}}</p>
+                    </mat-card-content>
+                </mat-card>
             </div>
             <div class="add-new-exercise" *ngIf="editMode">
                 <app-add-exercise [f3Name]="pax.f3Name" (cancel)="toggleEditMode()" (added)="addedExercise()"></app-add-exercise>

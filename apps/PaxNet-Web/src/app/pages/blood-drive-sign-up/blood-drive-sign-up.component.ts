@@ -301,7 +301,6 @@ export class BloodDriveSignUpComponent {
     }
 
     logBleedTime() {
-        console.log(this.userEntry);
         const ref = this.matDialog.open(BleedTimeReportDialog, {
             data: {
                 entry: this.userEntry

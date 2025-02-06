@@ -139,6 +139,8 @@ export class UserDetailComponent {
       for (let achievement of profileData.achievements) {
         await this.userProfileService.updateAchievementFormat(achievement, userId);
       }
+      // Use as needed...
+      // await this.userProfileService.cleanUpDuplicateAchievements(userId, profileData.achievements);
     }
     this.userProfileData = profileData;
   }

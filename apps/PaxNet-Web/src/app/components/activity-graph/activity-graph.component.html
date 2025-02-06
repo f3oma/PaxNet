@@ -16,13 +16,15 @@
             <li>Sat</li>
           </ul>
           <ul class="squares">
-            <li *ngFor="let workout of workouts" [id]="'l-' + workout.countPerDay"></li>
+            <li *ngFor="let workout of workouts" [id]="'l-' + workout.countPerDay" 
+              [ngClass]="{'personal-activity' : workout.hadPersonalWorkout && workout.countPerDay === 0, 'personal-activity-with-other-activity' : workout.hadPersonalWorkout && workout.countPerDay > 0 }"></li>
           </ul>
       </div>
       <div class="legend-container">
         <ol class="legend">
           <li><span class="legend-square" id="l-1"></span>Beatdown Attended</li>
           <li><span class="legend-square" id="l-2"></span>Beatdown + Pre-Activity</li>
+          <li><span class="legend-square personal-activity"></span>Personal Workout</li>
         </ol>
       </div>
       <div class="month-selector">
@@ -32,17 +34,20 @@
     </div>
     <div class="recent-activity-container">
       <div class="recent-title">
-        <h2>Recent Beatdowns</h2>
+        <h2>Recent Workouts</h2>
         <!-- <a *ngIf="!loadingRecents" [routerLink]="['/users/' + user.id + '/all-workouts']">View All</a> -->
         <ng-container *ngIf="!loadingRecents; else loadingSpinner"></ng-container>
       </div>
       <div class="fill-container" *ngIf="loadingRecents"></div>
       <ng-container *ngIf="recentActivity && !loadingRecents">
-        <div class="recent-activity" *ngFor="let activity of recentActivity" [ngClass]="{ 'activity-color' : activity.preActivity !== 'None'}">
+        <div class="recent-activity" *ngFor="let activity of recentActivity" [ngClass]="{ 'activity-color' : activity.preActivity !== 'None', 'personal-activity' : activity.activityType === 'personal'}">
           <p class="activity-date">{{activity.date | date: 'MM/dd/yyyy'}}</p>
-          <div class="title">            
-            <h2>{{activity.beatdownDomain.eventName ? activity.beatdownDomain.eventName : activity.beatdownDomain.aoLocation?.name}}</h2>
-            <p id="pre-activity" *ngIf="activity.preActivity !== 'None'">Pre-Activity: <b>{{activity.preActivity}}</b></p>
+          <div class="title">
+            <h2 *ngIf="activity.activityType === 'personal'">Personal Workout</h2>
+            <h2 *ngIf="activity.activityType === 'downrange'">Downrange</h2>
+            <h2 *ngIf="activity.activityType === 'shieldLock'">Shield Lock</h2>
+            <h2 *ngIf="activity.activityType === 'f3Omaha'">{{activity.beatdownDomain.eventName ? activity.beatdownDomain.eventName : activity.beatdownDomain.aoLocation?.name}}</h2>
+            <p id="pre-activity" *ngIf="activity.activityType !== 'personal' &&activity.preActivity !== 'None'">Pre-Activity: <b>{{activity.preActivity}}</b></p>
           </div>
         </div>
         <div class="empty-activity" *ngIf="recentActivity.length === 0">

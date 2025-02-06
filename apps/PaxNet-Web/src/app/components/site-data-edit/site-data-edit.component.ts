@@ -173,22 +173,26 @@ export class SiteDataEditComponent implements OnInit, AfterViewChecked {
   
       if (this.addNewSite) {
         await this.aoManagerService.addNewSite(site);
-        const current = new Date();
-        const sixMonths = new Date();
-        sixMonths.setMonth(current.getMonth() + 6);
-        current.setHours(6, 0, 0, 0);
-        sixMonths.setHours(6, 0, 0, 0);
-        await this.beatdownService.generateBeatdownsBetweenDates(site, current, sixMonths);
+        await this.createBeatdownsForSite(site);
       } else {
         await this.aoManagerService.updateSiteData(site);
-        // const current = new Date();
-        // const sixMonths = new Date();
-        // sixMonths.setMonth(current.getMonth() + 6);
-        // await this.beatdownService.generateBeatdownsBetweenDates(site, current, sixMonths);
+        const createBeatdowns = false;
+        if (createBeatdowns) {
+          await this.createBeatdownsForSite(site);
+        }
       }
       this.saveLoading = false;
       this.userSavedEmitter.emit(true);
     }
+  }
+
+  private async createBeatdownsForSite(site: IAOData) {
+    const current = new Date();
+    const sixMonths = new Date();
+    current.setHours(6, 0, 0, 0);
+    sixMonths.setHours(6, 0, 0, 0);
+    sixMonths.setMonth(current.getMonth() + 6);
+    return this.beatdownService.generateBeatdownsBetweenDates(site, current, sixMonths);
   }
 
   setsAreEqual(set1: Set<any>, set2: Set<any>): boolean {

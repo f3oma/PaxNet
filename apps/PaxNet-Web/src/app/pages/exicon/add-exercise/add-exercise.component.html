@@ -9,6 +9,16 @@
           <mat-label>Description</mat-label>
           <textarea formControlName="description" autocorrect="off" autocomplete="off" matInput type="text" placeholder="Exercise description" required></textarea>
         </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Category</mat-label>
+          <mat-select formControlName="category" required>
+            <mat-option value="core">Core</mat-option>
+            <mat-option value="arms">Arms</mat-option>
+            <mat-option value="legs">Legs</mat-option>
+            <mat-option value="warm-up">Warm-Up</mat-option>
+            <mat-option value="compound">Compound</mat-option>
+          </mat-select>
+        </mat-form-field>
     </form>
     <button mat-button id="add" class="solid-button" style="background-color: orange; color: #000;" (click)="addExercise()">Add</button>
     <button mat-button id="cancel" class="solid-button" style="background-color: #bebebe; margin-left: 6px; color: #000;" (click)="cancel()">Cancel</button>

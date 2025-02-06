@@ -1,5 +1,5 @@
 import { BigQuery } from '@google-cloud/bigquery';
-import express, { Request, Response } from 'express';
+import express, { Request, Response, query } from 'express';
 import cors from 'cors';
 
 interface Params {
@@ -203,6 +203,61 @@ GROUP BY u.data
 ORDER BY total_posts DESC
 LIMIT 10;
 `;
+        const [rows] = await bigquery.query(query);
+        const transformed = rows.map(r => {
+            return {
+                f3Name: r.F3Name,
+                posts: r.total_posts
+            }
+        });
+        res.json(transformed);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error querying BigQuery');
+    }
+});
+
+app.get('/users/top-10-leaderboard/:timeframe', async (req: Request, res: Response) => {
+    
+    const { timeframe } = req.params;
+
+    try {
+        const weekQuery = `SELECT
+  REGEXP_EXTRACT(u.data, r'f3Name":"(.*?)","') AS F3Name,
+  COUNT(*) AS total_posts
+FROM f3omaha.firestore_beatdown_attendance.beatdown_attendance_schema_beatdown_community_attendance_schema_latest a
+JOIN f3omaha.firestore_users.users_raw_latest u on a.usersAttended_member = concat("users/", u.document_id)
+WHERE EXTRACT(YEAR FROM CURRENT_DATE()) = EXTRACT(YEAR FROM a.timestamp)
+AND EXTRACT(WEEK FROM CURRENT_DATE()) = EXTRACT(WEEK FROM a.timestamp)
+GROUP BY REGEXP_EXTRACT(u.data, r'f3Name":"(.*?)","')
+ORDER BY COUNT(*) DESC
+`;
+
+        const monthQuery = `
+SELECT
+  REGEXP_EXTRACT(u.data, r'f3Name":"(.*?)","') AS F3Name,
+  COUNT(*) AS total_posts
+FROM f3omaha.firestore_beatdown_attendance.beatdown_attendance_schema_beatdown_community_attendance_schema_latest a
+JOIN f3omaha.firestore_users.users_raw_latest u on a.usersAttended_member = concat("users/", u.document_id)
+WHERE EXTRACT(YEAR FROM CURRENT_DATE()) = EXTRACT(YEAR FROM a.timestamp)
+AND EXTRACT(MONTH FROM CURRENT_DATE()) = EXTRACT(MONTH FROM a.timestamp)
+GROUP BY REGEXP_EXTRACT(u.data, r'f3Name":"(.*?)","')
+ORDER BY COUNT(*) DESC
+`;
+
+        const yearQuery = `
+SELECT
+  REGEXP_EXTRACT(u.data, r'f3Name":"(.*?)","') AS F3Name,
+  COUNT(*) AS total_posts
+FROM f3omaha.firestore_beatdown_attendance.beatdown_attendance_schema_beatdown_community_attendance_schema_latest a
+JOIN f3omaha.firestore_users.users_raw_latest u on a.usersAttended_member = concat("users/", u.document_id)
+WHERE EXTRACT(YEAR FROM CURRENT_DATE()) = EXTRACT(YEAR FROM a.timestamp)
+GROUP BY REGEXP_EXTRACT(u.data, r'f3Name":"(.*?)","')
+ORDER BY COUNT(*) DESC
+`;
+
+        const query = timeframe === 'week' ? weekQuery : timeframe === 'month' ? monthQuery : yearQuery;
+
         const [rows] = await bigquery.query(query);
         const transformed = rows.map(r => {
             return {

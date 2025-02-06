@@ -12,17 +12,71 @@
   @include mat.select-density(-2); /* Adjust density level */
 }
 
-// Define the palettes for your theme using the Material Design palettes available in palette.scss
-// (imported above). For each palette, you can optionally specify a default, lighter, and darker
-// hue. Available color palettes: https://material.io/design/color/
-$paxnet-primary: mat.define-palette(mat.$indigo-palette);
-$paxnet-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+// Define custom palette maps
+$custom-primary: (
+    50: #ffffff,
+    100: #f5f5f5,
+    200: #e7e7e7,
+    300: #d9d9d9,
+    400: #bcbcbc,
+    500: #000000,  // main primary color (black)
+    600: #000000,
+    700: #000000,
+    800: #000000,
+    900: #000000,
+    contrast: (
+        50: rgba(black, 0.87),
+        100: rgba(black, 0.87),
+        200: rgba(black, 0.87),
+        300: rgba(black, 0.87),
+        400: rgba(black, 0.87),
+        500: white,
+        600: white,
+        700: white,
+        800: white,
+        900: white,
+    )
+);
 
-// The warn palette is optional (defaults to red).
-$paxnet-warn: mat.define-palette(mat.$red-palette);
+$custom-accent: (
+    50: #fff6e5,
+    100: #ffe4b3,
+    200: #ffd280,
+    300: #ffc14d,
+    400: #ffb326,
+    500: #ffa600,  // main accent color (orange)
+    600: #cc8500,
+    700: #996300,
+    800: #664200,
+    900: #332100,
+    A100: #ffd280,
+    A200: #ffa600,
+    A400: #cc8500,
+    A700: #996300,
+    contrast: (
+        50: rgba(black, 0.87),
+        100: rgba(black, 0.87),
+        200: rgba(black, 0.87),
+        300: rgba(black, 0.87),
+        400: rgba(black, 0.87),
+        500: black,
+        600: white,
+        700: white,
+        800: white,
+        900: white,
+        A100: rgba(black, 0.87),
+        A200: black,
+        A400: white,
+        A700: white,
+    )
+);
 
-// Create the theme object. A theme consists of configurations for individual
-// theming systems such as "color" or "typography".
+// Create the palettes
+$paxnet-primary: mat.define-palette($custom-primary);
+$paxnet-accent: mat.define-palette($custom-accent);
+$paxnet-warn: mat.define-palette(mat.$red-palette);  // keeping default warn
+
+// Create the theme object
 $paxnet-theme: mat.define-light-theme((
   color: (
     primary: $paxnet-primary,

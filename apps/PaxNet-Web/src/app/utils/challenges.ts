@@ -120,15 +120,17 @@ export async function winterWarriorChallengeHelper(challenge: BaseChallenge, cha
         challenge.challengeInfoId === Challenges.WinterWarrior2024 &&
         new Date(challenge.startDateString) < new Date()) {
 
+        const alreadyCompleted = challenge.state === ChallengeState.Completed;
         const iterativeChallenge = challenge as IterativeCompletionChallenge;
-        if (iterativeChallenge.state === ChallengeState.NotStarted || iterativeChallenge.state === ChallengeState.PreRegistered)
+
+        if (iterativeChallenge.state !== ChallengeState.Completed && (iterativeChallenge.state === ChallengeState.NotStarted || iterativeChallenge.state === ChallengeState.PreRegistered))
             iterativeChallenge.updateState(ChallengeState.InProgress);
 
         // For this challenge, users just need to post in the winter
         // when temps are at or below 20 deg. We should check this before entering this method.
         iterativeChallenge.addNewIteration();
         
-        if (iterativeChallenge.isComplete()) {
+        if (iterativeChallenge.isComplete() && !alreadyCompleted) {
             await challengeManager.completeChallenge(iterativeChallenge);
         }
 
@@ -139,13 +141,15 @@ export async function winterWarriorChallengeHelper(challenge: BaseChallenge, cha
 export async function preRunRuckChallengeHelper(challenge: BaseChallenge, completedTotal: number, challengeManager: ChallengeManager) {
     if (challenge.type === ChallengeType.UserSelectedGoal && challenge.challengeInfoId === Challenges.PreRuckRunChallenge && new Date(challenge.startDateString) < new Date()) {
         const userSelectedGoalChallenge = challenge as UserSelectedGoalChallenge;
-        if (userSelectedGoalChallenge.state === ChallengeState.NotStarted || userSelectedGoalChallenge.state === ChallengeState.PreRegistered)
+        const alreadyCompleted = userSelectedGoalChallenge.state === ChallengeState.Completed;
+
+        if (userSelectedGoalChallenge.state !== ChallengeState.Completed && (userSelectedGoalChallenge.state === ChallengeState.NotStarted || userSelectedGoalChallenge.state === ChallengeState.PreRegistered))
             userSelectedGoalChallenge.updateState(ChallengeState.InProgress);
 
         const newValue = userSelectedGoalChallenge.currentValue + completedTotal;
         userSelectedGoalChallenge.updateValue(newValue);
 
-        if (userSelectedGoalChallenge.isComplete()) {
+        if (userSelectedGoalChallenge.isComplete() && !alreadyCompleted) {
             await challengeManager.completeChallenge(userSelectedGoalChallenge);
             return;
         }

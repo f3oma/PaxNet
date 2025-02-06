@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { PreActivity } from '@shared/src';
 import { BehaviorSubject, Observable, Subject, debounceTime, map } from 'rxjs';
 import { UserReportedWorkout } from 'src/app/models/beatdown-attendance';
 import { BaseChallenge } from 'src/app/models/user-challenge.model';
@@ -29,26 +30,16 @@ export const enum AvailableTabs {
   styleUrls: ['./personal-workout-report.component.scss']
 })
 export class PersonalWorkoutReportComponent {
-  f3OmahaForm: FormGroup = new FormGroup({
+  personalWorkoutReportForm: FormGroup = new FormGroup({
+    'activityType': new FormControl(''),
     'beatdown': new FormControl(''),
+    'date': new FormControl(new Date()),
     'preActivity': new FormControl('None'),
-    'preRunChallengeMiles': new FormControl(0),
-    'notes': new FormControl('')
-  });
-
-  downrangeForm: FormGroup = new FormGroup({
-    'downrangeAOName': new FormControl(''),
-    'preActivity': new FormControl('None'),
+    'preActivityMiles': new FormControl(0),
+    'totalMiles': new FormControl(0),
+    'workoutCategory': new FormControl('None'),
+    'workoutDifficulty': new FormControl('light'),
     'notes': new FormControl(''),
-    'preRunChallengeMiles': new FormControl(0),
-    'date': new FormControl(new Date())
-  });
-
-  shieldLockForm: FormGroup = new FormGroup({
-    'preActivity': new FormControl('None'),
-    'notes': new FormControl(''),
-    'preRunChallengeMiles': new FormControl(0),
-    'date': new FormControl(new Date())
   });
 
   user: PaxUser;
@@ -60,7 +51,7 @@ export class PersonalWorkoutReportComponent {
   selectedBeatdownOption: any = '';
 
   activeTab: AvailableTabs = AvailableTabs.F3Omaha;
-  showPreRunRuckChallengeField: boolean = false;
+  userIsCommittedToPreRunRuckChallenge: boolean = false;
 
   constructor(
     private workoutService: WorkoutManagerService,
@@ -75,12 +66,12 @@ export class PersonalWorkoutReportComponent {
     this.activeChallenges = data.activeChallenges;
     for (let challenge of data.activeChallenges) {
       if (challenge.challengeInfoId === Challenges.PreRuckRunChallenge && new Date(challenge.startDateString) < new Date()) {
-        this.showPreRunRuckChallengeField = true;
+        this.userIsCommittedToPreRunRuckChallenge = true;
       }
     }
 
-    this.f3OmahaForm.controls['preActivity'].setValue('None');
-    this.f3OmahaForm.controls['beatdown'].valueChanges.pipe(
+    this.personalWorkoutReportForm.controls['preActivity'].setValue('None');
+    this.personalWorkoutReportForm.controls['beatdown'].valueChanges.pipe(
       debounceTime(1000),
       map(async (value: string) => {
           if (value) {
@@ -94,12 +85,17 @@ export class PersonalWorkoutReportComponent {
     this.userSaveLoading = true;
     let workoutData = null;
 
-    if (this.activeTab === AvailableTabs.F3Omaha) {
-      workoutData = await this.validateF3OmahaForm();
-    } else if (this.activeTab === AvailableTabs.Downrange) {
-      workoutData = await this.validateDownrangeForm();
-    } else if (this.activeTab === AvailableTabs.ShieldLock) {
-      workoutData = await this.validateShieldLockForm();
+    if (!this.personalWorkoutReportForm.valid) {
+      this.userSaveLoading = false;
+      alert("Check inputs and try again");
+      return null;
+    }
+
+    var activityType = this.personalWorkoutReportForm.controls['activityType'].value;
+    if (activityType === 'f3Omaha') {
+      workoutData = await this.generateF3OmahaWorkoutData();
+    } else {
+      workoutData = await this.generateNonBeatdownWorkoutData();
     }
 
     if (!workoutData) {
@@ -120,9 +116,10 @@ export class PersonalWorkoutReportComponent {
           }
         }
 
-        if (challenge.challengeInfoId === Challenges.PreRuckRunChallenge && new Date(challenge.startDateString) < new Date()) {
+        if (challenge.challengeInfoId === Challenges.PreRuckRunChallenge && 
+          new Date(challenge.startDateString) < new Date() && 
+          this.isEligibleForPreRunRuckChallenge(workoutData.preActivity, workoutData.beatdown)) {
           const completedTotal = this.getNumberOfMilesPreRan();
-          console.log(completedTotal);
           await preRunRuckChallengeHelper(challenge, completedTotal, this.challengeManager);
         }
       }
@@ -131,8 +128,8 @@ export class PersonalWorkoutReportComponent {
     this.dialogRef.close();
   }
 
-  isEligibleForPreRunRuckChallengeF3Omaha(preactivitySelected: string, beatdownSelected?: string) {
-    if (!this.showPreRunRuckChallengeField)
+  isEligibleForPreRunRuckChallenge(preactivitySelected: string, beatdownSelected?: string) {
+    if (!this.userIsCommittedToPreRunRuckChallenge)
       return false;
 
     if (preactivitySelected === 'Run' || preactivitySelected === 'Ruck' || preactivitySelected === 'Smurph' || beatdownSelected?.includes('Halfway House')) {
@@ -142,97 +139,46 @@ export class PersonalWorkoutReportComponent {
     return false;
   }
 
-  isEligibleForPreRunRuckChallengeDownrange(preactivitySelected: string) {
-    if (!this.showPreRunRuckChallengeField)
-      return false;
-
-    if (preactivitySelected === 'Run' || preactivitySelected === 'Ruck' || preactivitySelected === 'Smurph') {
-      return true;
-    }
-    return false;
-  }
-
-  isEligibleForPreRunRuckChallengeShield(preactivitySelected: string) {
-    if (!this.showPreRunRuckChallengeField)
-      return false;
-
-    if (preactivitySelected === 'Run' || preactivitySelected === 'Ruck' || preactivitySelected === 'Smurph') {
-      return true;
-    }
-    return false;
-  }
-
   private getNumberOfMilesPreRan(): number {
     let milesCompleted = 0;
 
-    if (this.activeTab === AvailableTabs.F3Omaha) {
-      milesCompleted = this.f3OmahaForm.controls['preRunChallengeMiles'].value;
-    } else if (this.activeTab === AvailableTabs.Downrange) {
-      milesCompleted = this.downrangeForm.controls['preRunChallengeMiles'].value;
-    } else if (this.activeTab === AvailableTabs.ShieldLock) {
-      milesCompleted = this.shieldLockForm.controls['preRunChallengeMiles'].value;
+    if (this.personalWorkoutReportForm.controls['activityType'].value !== 'personal') {
+      milesCompleted = this.personalWorkoutReportForm.controls['preActivityMiles'].value;
     }
 
     return milesCompleted;
   }
 
-  async validateF3OmahaForm() {
-    if (this.f3OmahaForm.valid) {
-      const beatdown = this.f3OmahaForm.controls['beatdown'].value;
-      const beatdownRef = this.beatdownService.getBeatdownReference(beatdown.ref);
-      let workoutData: UserReportedWorkout = {
-        preActivity: this.f3OmahaForm.controls['preActivity'].value,
-        date: beatdown.date,
-        beatdown: beatdownRef,
-        notes: this.f3OmahaForm.controls['notes'].value,
-      }
-      return workoutData;
-    } else {
-      this.userSaveLoading = false;
-      alert("Check inputs and try again");
-      return null;
+  async generateF3OmahaWorkoutData(): Promise<UserReportedWorkout | null> {
+    const beatdown = this.personalWorkoutReportForm.controls['beatdown'].value;
+    const beatdownRef = this.beatdownService.getBeatdownReference(beatdown.ref);
+    let workoutData: UserReportedWorkout = {
+      preActivity: this.personalWorkoutReportForm.controls['preActivity'].value,
+      milesCompleted: this.personalWorkoutReportForm.controls['totalMiles'].value,
+      date: beatdown.date,
+      beatdown: beatdownRef,
+      notes: this.personalWorkoutReportForm.controls['notes'].value,
+      workoutCategory: this.personalWorkoutReportForm.controls['workoutCategory'].value,
+      workoutDifficulty: this.personalWorkoutReportForm.controls['workoutDifficulty'].value,
+      activityType: this.personalWorkoutReportForm.controls['activityType'].value,
+      preActivityMiles: this.personalWorkoutReportForm.controls['preActivityMiles'].value,
     }
+    return workoutData;
   }
 
-  async validateDownrangeForm(): Promise<UserReportedWorkout | null> {
-    if (this.downrangeForm.valid) {
-      const downrangeAOName = this.downrangeForm.controls['downrangeAOName'].value;
-      const date = this.downrangeForm.controls['date'].value;
-      date.setHours(6, 0, 0, 0);
-
-      const beatdownRef = await this.beatdownService.generateDownrangeBeatdown(downrangeAOName, date);
-      let workoutData: UserReportedWorkout = {
-        preActivity: this.downrangeForm.controls['preActivity'].value,
-        notes: this.downrangeForm.controls['notes'].value,
-        date: date,
-        beatdown: beatdownRef
-      }
-      return workoutData;
-    } else {
-      this.userSaveLoading = false;
-      alert("Check inputs and try again");
-      return null;
+  async generateNonBeatdownWorkoutData(): Promise<UserReportedWorkout | null> {
+    let workoutData: UserReportedWorkout = {
+      preActivity: this.personalWorkoutReportForm.controls['activityType'].value === 'personal' ? PreActivity.None : this.personalWorkoutReportForm.controls['preActivity'].value,
+      preActivityMiles: this.personalWorkoutReportForm.controls['preActivityMiles'].value,
+      milesCompleted: this.personalWorkoutReportForm.controls['totalMiles'].value,
+      date: this.personalWorkoutReportForm.controls['date'].value,
+      notes: this.personalWorkoutReportForm.controls['notes'].value,
+      workoutCategory: this.personalWorkoutReportForm.controls['workoutCategory'].value,
+      workoutDifficulty: this.personalWorkoutReportForm.controls['workoutDifficulty'].value,
+      activityType: this.personalWorkoutReportForm.controls['activityType'].value,
     }
-  }
 
-  async validateShieldLockForm(): Promise<UserReportedWorkout | null> {
-    if (this.shieldLockForm.valid) {
-      const date: Date = this.shieldLockForm.controls['date'].value;
-      date.setHours(6, 0, 0, 0);
-
-      const beatdownRef = await this.beatdownService.generateShieldLockBeatdown(date);
-      let workoutData: UserReportedWorkout = {
-        preActivity: this.shieldLockForm.controls['preActivity'].value,
-        notes: this.shieldLockForm.controls['notes'].value,
-        date: date,
-        beatdown: beatdownRef
-      }
-      return workoutData;
-    } else {
-      this.userSaveLoading = false;
-      alert("Check inputs and try again");
-      return null;
-    }
+    return workoutData;
   }
 
   public displayBeatdownOptions(option: any) {
@@ -245,17 +191,6 @@ export class PersonalWorkoutReportComponent {
 
   userCancel() {
     this.dialogRef.close();
-  }
-
-  changedTab(event: any) {
-    const idx =  event.index;
-    if (idx === 0) {
-      this.activeTab = AvailableTabs.F3Omaha;
-    } else if (idx === 1) {
-      this.activeTab = AvailableTabs.Downrange;
-    } else if (idx === 2) {
-      this.activeTab = AvailableTabs.ShieldLock;
-    }
   }
 
   private async updateBeatdownAutocompleteResults(partialBeatdownQuery: string): Promise<void> {

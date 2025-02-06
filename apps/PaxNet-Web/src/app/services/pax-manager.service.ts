@@ -229,7 +229,6 @@ export class PaxManagerService {
       const jsonString = data['jsonString'];
       return JSON.parse(jsonString);
     } else {
-      console.log("HERE");
       const anniversaries = await this.calculateAnniversaries(weekStartDate, weekEndDate);
       const anniversariesStringed = JSON.stringify(anniversaries);
       await setDoc(weeklyAnniversaryDocRef, { jsonString: anniversariesStringed });

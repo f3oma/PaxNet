@@ -20,20 +20,30 @@ export interface IBeatdownAttendance {
        // 2024 - Record - Data: MyTotalAttendance
        // beatdownId - Record - Data: UserReportedWorkoutEntity
 export interface UserReportedWorkout {
-    beatdown: DocumentReference<Beatdown>;
+    beatdown?: DocumentReference<Beatdown>;
     preActivity: PreActivity;
     date: Date;
     notes?: string;
+    milesCompleted?: number;
+    workoutCategory?: string;
+    workoutDifficulty?: string;
+    activityType?: string;
+    preActivityMiles?: number;
 }
 
 export interface UserReportedWorkoutUI extends UserReportedWorkout {
-    beatdownDomain: Beatdown;
+    beatdownDomain?: Beatdown;
 }
 
 export interface UserReportedWorkoutEntity {
+    activityType?: string;
     preActivity: PreActivity;
     date: Timestamp;
     notes?: string;
+    milesCompleted?: number;
+    workoutCategory?: string;
+    workoutDifficulty?: string;
+    preActivityMiles?: number;
 }
 
 // Single record for all attendance counts by year
@@ -41,4 +51,6 @@ export interface MyTotalAttendance {
     beatdownsAttended: number;
     preactivitiesCompleted: number;
     favoriteActivity: string;
+    milesCompleted?: number;
+    preActivityMiles?: number;
 }

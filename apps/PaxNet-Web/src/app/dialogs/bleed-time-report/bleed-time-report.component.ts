@@ -5,12 +5,11 @@ import { MatDialogRef } from "@angular/material/dialog";
 @Component({
     selector: 'bleed-time-report-dialog',
     templateUrl: 'bleed-time-report.component.html',
-    styleUrls: ['bleed-time-report.component.scss']
   })
 export class BleedTimeReportDialog {
 
-    form = new FormGroup({
-        bleedTime: new FormControl('')
+    form: FormGroup = new FormGroup({
+        bleedTime: new FormControl('', [Validators.required])
     });
     
     constructor(
