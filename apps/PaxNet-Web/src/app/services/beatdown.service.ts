@@ -7,6 +7,8 @@ import { AOManagerService } from "./ao-manager.service";
 import { AoLocationRef, PaxUser } from "../models/users.model";
 import { PaxManagerService } from "./pax-manager.service";
 import { WorkoutManagerService } from "./workout-manager.service";
+import { UserReportedWorkout } from "../models/beatdown-attendance";
+import { PersonalWorkoutConverter } from "../utils/personal-workout.converter";
 
 @Injectable({
     providedIn: 'root'
@@ -37,7 +39,8 @@ export class BeatdownService {
         private aoManagerService: AOManagerService,
         private paxManagerService: PaxManagerService,
         private beatdownConverter: BeatdownConverter,
-        private workoutService: WorkoutManagerService) {}
+        private workoutService: WorkoutManagerService,
+        private personalWorkoutConverter: PersonalWorkoutConverter) {}
 
     async getBeatdownDetail(id: string): Promise<Beatdown | undefined> {
         const ref = doc(this.beatdownCollection, id);
@@ -134,6 +137,39 @@ export class BeatdownService {
         }
 
         return result;
+    }
+
+    // This really should be in the workout manager service but circular dependency
+    public async convertToUpdatedPersonalWorkout(userId: string, workouts: UserReportedWorkout[]): Promise<void> {
+        const batch = writeBatch(this.firestore);
+        const userPersonalWorkoutCollection = collection(this.firestore, `users/${userId}/personal_attendance`).withConverter(this.personalWorkoutConverter.getConverter());
+
+        for (let workout of workouts) {
+            // Already updated
+            if (workout.activityType) {
+                continue;
+            }
+
+            if (workout.beatdown) {
+                const beatdownData = await this.getBeatdownDetail(workout.beatdown.id);
+                if (beatdownData) {
+                    if (beatdownData.aoName.includes('DR')) {
+                        workout.activityType = 'downrange';
+                    } else if (beatdownData.aoName.includes('Shield Lock')) {
+                        workout.activityType = 'shieldLock';
+                    } else {
+                        workout.activityType = 'f3Omaha';
+                    }
+                }
+            }
+
+            const docRef = doc(userPersonalWorkoutCollection, workout.beatdown.id);
+            batch.update(docRef, {
+                activityType: workout.activityType
+            });
+        }
+
+        await batch.commit();
     }
 
     async createBeatdown(beatdown: Partial<IBeatdown>) {

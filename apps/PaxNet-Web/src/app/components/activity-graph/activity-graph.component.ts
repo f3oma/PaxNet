@@ -53,6 +53,7 @@ export class ActivityGraphComponent implements AfterViewInit {
       beatdownAttendance = this.beatdownAttendanceCache.get(this.monthsOut)!;
     } else {
       beatdownAttendance = await this.workoutService.getAllBeatdownAttendanceForUser(this.user.id);
+      await this.beatdownService.convertToUpdatedPersonalWorkout(this.user.id, beatdownAttendance);
       this.beatdownAttendanceCache.set(this.monthsOut, beatdownAttendance);
     }
 
@@ -159,7 +160,9 @@ export class ActivityGraphComponent implements AfterViewInit {
           itemHadPersonalWorkout = true;
         }
       } else {
-        itemCountPerDay = item.preActivity != PreActivity.None ? 2 : 1;
+        if (item.activityType !== 'personal') {
+          itemCountPerDay = item.preActivity != PreActivity.None ? 2 : 1;
+        }
       }
 
       // Special cases for personal workouts

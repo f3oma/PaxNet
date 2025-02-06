@@ -30,9 +30,14 @@ export class PersonalWorkoutConverter {
         fromFirestore: (snap: QueryDocumentSnapshot): any => {
             const data: UserReportedWorkoutEntity = snap.data() as UserReportedWorkoutEntity;
             let beatdownRef: DocumentReference | null = null;
-            if (data.activityType === 'f3Omaha') {
+
+            if (data.activityType && data.activityType === 'f3Omaha') {
                 beatdownRef = doc(this.firestore, `beatdowns/${snap.id}`);
+            } else {
+                // Needed for backcompat
+                beatdownRef= doc(this.firestore, `beatdowns/${snap.id}`);
             }
+
             return <UserReportedWorkout> {
                 beatdown: beatdownRef,
                 date: data.date.toDate(),
