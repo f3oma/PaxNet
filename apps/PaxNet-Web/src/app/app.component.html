@@ -50,6 +50,7 @@
             <ng-container *ngIf="paxUserData$ | async as paxUserData; else claimData">
               <a ngbDropdownItem class="dropdown-item" [routerLink]="['/users/', paxUserData.id]">My Profile</a>
               <a ngbDropdownItem class="dropdown-item" [routerLink]="['/settings']">Settings</a>
+              <a ngbDropdownItem class="dropdown-item" [routerLink]="['/support']">Support</a>
             </ng-container>
             <div class="admin-data" *ngIf="isAdmin">
               <div class="dropdown-divider"></div>

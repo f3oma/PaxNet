@@ -146,7 +146,7 @@ export async function preRunRuckChallengeHelper(challenge: BaseChallenge, comple
         if (userSelectedGoalChallenge.state !== ChallengeState.Completed && (userSelectedGoalChallenge.state === ChallengeState.NotStarted || userSelectedGoalChallenge.state === ChallengeState.PreRegistered))
             userSelectedGoalChallenge.updateState(ChallengeState.InProgress);
 
-        const newValue = userSelectedGoalChallenge.currentValue + completedTotal;
+        const newValue = Math.round((userSelectedGoalChallenge.currentValue + completedTotal) * 100) / 100;
         userSelectedGoalChallenge.updateValue(newValue);
 
         if (userSelectedGoalChallenge.isComplete() && !alreadyCompleted) {
