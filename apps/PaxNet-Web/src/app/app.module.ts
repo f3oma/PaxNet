@@ -80,6 +80,9 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { AdminTicketsComponent } from './components/support/admin/admin-tickets.component';
+import { CreateTicketComponent } from './components/support/create-ticket/create-ticket.component';
+import { MyTicketsComponent } from './components/support/my-tickets/my-tickets.component';
 
 @NgModule({
   declarations: [
@@ -131,6 +134,9 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     SetPersonalGoalDialog,
     BloodDriveSignUpComponent,
     BleedTimeReportDialog,
+    AdminTicketsComponent,
+    CreateTicketComponent,
+    MyTicketsComponent
   ],
   imports: [
     BrowserModule,

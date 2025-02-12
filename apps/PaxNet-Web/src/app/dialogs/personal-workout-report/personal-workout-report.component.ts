@@ -18,12 +18,6 @@ export interface UserReportedWorkoutProps {
   activeChallenges: BaseChallenge[];
 }
 
-export const enum AvailableTabs {
-  F3Omaha = "F3Omaha",
-  Downrange = "Downrange",
-  ShieldLock = "ShieldLock",
-};
-
 @Component({
   selector: 'app-personal-workout-report',
   templateUrl: './personal-workout-report.component.html',
@@ -50,7 +44,6 @@ export class PersonalWorkoutReportComponent {
   filteredBeatdownOptions$: Observable<any[]> = this.filteredBeatdownOptionsSubject.asObservable();
   selectedBeatdownOption: any = '';
 
-  activeTab: AvailableTabs = AvailableTabs.F3Omaha;
   userIsCommittedToPreRunRuckChallenge: boolean = false;
 
   constructor(
@@ -109,7 +102,9 @@ export class PersonalWorkoutReportComponent {
       for (let challenge of this.activeChallenges) {
 
         // Do we have an active challenge
-        if (challenge.challengeInfoId === Challenges.WinterWarrior2024 && new Date(challenge.startDateString) < new Date()) {
+        if (challenge.challengeInfoId === Challenges.WinterWarrior2024 && 
+          activityType !== "personal" &&
+          new Date(challenge.startDateString) < new Date()) {
           const feelsLike: number | undefined = await this.weatherService.getFeelsLikeForDate(workoutData.date);
           if (feelsLike && feelsLike <= 20) {
             await winterWarriorChallengeHelper(challenge, this.challengeManager);
@@ -117,6 +112,7 @@ export class PersonalWorkoutReportComponent {
         }
 
         if (challenge.challengeInfoId === Challenges.PreRuckRunChallenge && 
+          activityType !== "personal" &&
           new Date(challenge.startDateString) < new Date() && 
           this.isEligibleForPreRunRuckChallenge(workoutData.preActivity, workoutData.beatdown)) {
           const completedTotal = this.getNumberOfMilesPreRan();

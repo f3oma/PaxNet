@@ -29,6 +29,9 @@ import { UserStatsViewComponent } from './pages/user-stats-view/user-stats-view.
 import { ThirdFComponent } from './pages/third-f/third-f.component';
 import { BloodDriveSignUpComponent } from './pages/blood-drive-sign-up/blood-drive-sign-up.component';
 import { LogWorkoutComponent } from './pages/log-workout/log-workout.component';
+import { CreateTicketComponent } from './components/support/create-ticket/create-ticket.component';
+import { MyTicketsComponent } from './components/support/my-tickets/my-tickets.component';
+import { AdminTicketsComponent } from './components/support/admin/admin-tickets.component';
 
 const routes: Routes = [
   {
@@ -179,6 +182,19 @@ const routes: Routes = [
         component: AdminUserDetailComponent,
         canActivate: [AdminRoleAuthGuard]
       },
+    ]
+  },
+  {
+    path: 'support',
+    children: [
+      { path: '', redirectTo: 'my-tickets', pathMatch: 'full' },
+      { path: 'create', component: CreateTicketComponent },
+      { path: 'my-tickets', component: MyTicketsComponent },
+      { 
+        path: 'admin',
+        component: AdminTicketsComponent,
+        canActivate: [AdminRoleAuthGuard]
+      }
     ]
   }
 ];
