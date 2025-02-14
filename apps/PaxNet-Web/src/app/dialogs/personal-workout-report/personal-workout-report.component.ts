@@ -111,10 +111,11 @@ export class PersonalWorkoutReportComponent {
           }
         }
 
+        const beatdownInfo = this.personalWorkoutReportForm.controls['beatdown'].value;
         if (challenge.challengeInfoId === Challenges.PreRuckRunChallenge && 
           activityType !== "personal" &&
           new Date(challenge.startDateString) < new Date() && 
-          this.isEligibleForPreRunRuckChallenge(workoutData.preActivity, workoutData.beatdown)) {
+          this.isEligibleForPreRunRuckChallenge(workoutData.preActivity, beatdownInfo?.name)) {
           const completedTotal = this.getNumberOfMilesPreRan();
           await preRunRuckChallengeHelper(challenge, completedTotal, this.challengeManager);
         }
@@ -128,7 +129,7 @@ export class PersonalWorkoutReportComponent {
     if (!this.userIsCommittedToPreRunRuckChallenge)
       return false;
 
-    if (preactivitySelected === 'Run' || preactivitySelected === 'Ruck' || preactivitySelected === 'Smurph' || beatdownSelected?.includes('Halfway House')) {
+    if (preactivitySelected === 'Run' || preactivitySelected === 'Ruck' || preactivitySelected === 'Smurph' || (beatdownSelected && beatdownSelected.includes('Halfway House'))) {
       return true;
     }
   

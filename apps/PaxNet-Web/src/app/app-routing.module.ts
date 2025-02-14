@@ -109,17 +109,14 @@ const routes: Routes = [
   },
   {
     path: 'sites',
-    canActivate: [BasicAuthenticatedAuthGuard],
     children: [
       {
         path: '',
         component: SiteManagementComponent,
-        canActivate: [BasicAuthenticatedAuthGuard]
       },
       {
         path: ':id',
         component: SiteDetailComponent,
-        canActivate: [BasicAuthenticatedAuthGuard]
       },
     ]
   },
