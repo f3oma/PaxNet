@@ -243,6 +243,10 @@ export class UserSelectedGoalChallenge extends BaseChallenge {
         this._currentValue = newValue;
     }
 
+    override isComplete(): boolean {
+        return this.currentValue >= this.goal; 
+    }
+
     override toProperties(): IUserSelectedGoalChallenge {
         const baseProperties = super.toProperties();
         return {
