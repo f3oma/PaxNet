@@ -3,7 +3,6 @@ import { Firestore, collection, addDoc, query, where, getDocs, updateDoc, doc, C
 import { SupportTicket } from '../models/support-ticket.model';
 import { UserAuthenticationService } from './user-authentication.service';
 import { SupportTicketConverter } from '../utils/support-ticket.converter';
-import { Collection } from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -23,11 +22,12 @@ export class SupportTicketService {
   async createTicket(description: string): Promise<void> {
     const paxUser = await this.authService.getPaxUser();
     const ticket: SupportTicket = {
-      userId: paxUser.id,
+      userId: paxUser?.id ?? null,
       description,
       status: 'open',
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      adminNotes: ''
     };
     
     await addDoc(this.supportTicketCollection, ticket);
@@ -35,6 +35,10 @@ export class SupportTicketService {
 
   async getUserTickets(): Promise<SupportTicket[]> {
     const paxUser = await this.authService.getPaxUser();
+    if (!paxUser) {
+      return [];
+    }
+
     const ticketsQuery = query(
       this.supportTicketCollection,
       where('userId', '==', paxUser.id)
@@ -53,7 +57,7 @@ export class SupportTicketService {
     const ticketRef = doc(this.firestore, 'supportTickets', ticketId);
     await updateDoc(ticketRef, {
       status,
-      adminNotes,
+      adminNotes: adminNotes ?? '',
       updatedAt: new Date()
     });
   }

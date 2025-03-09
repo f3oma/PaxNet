@@ -12,7 +12,7 @@ import { SupportTicketService } from 'src/app/services/support-ticket.service';
         <div *ngFor="let ticket of tickets" class="list-group-item">
           <div class="d-flex justify-content-between align-items-center">
             <div>
-              <h5 class="mb-1">Ticket #{{ticket.id}}</h5>
+              <h5 class="mb-1">Ticket ID: {{ticket.id}}</h5>
               <p class="mb-1">{{ticket.description}}</p>
               <small>Created: {{ticket.createdAt | date}}</small>
             </div>
