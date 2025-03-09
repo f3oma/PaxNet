@@ -3,11 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { PersonalWorkoutReportComponent, UserReportedWorkoutProps } from 'src/app/dialogs/personal-workout-report/personal-workout-report.component';
 import { Exercise } from 'src/app/models/exercise.model';
 import { PaxUser } from 'src/app/models/users.model';
-import { TopLeaderboardResponse } from 'src/app/models/statistics.model';
+import { TopLeaderboardResponse, TopQLeaderboardResponse } from 'src/app/models/statistics.model';
 import { ExiconService } from 'src/app/services/exicon.service';
 import { StatisticsService } from 'src/app/services/statistics.service';
 import { UserAuthenticationService } from 'src/app/services/user-authentication.service';
-import { PaxManagerService } from 'src/app/services/pax-manager.service';
 import { Observable, tap } from 'rxjs';
 import { AuthenticatedUser } from 'src/app/models/authenticated-user.model';
 import { ChallengeManager } from 'src/app/services/challenge-manager.service';
@@ -22,9 +21,12 @@ export class LogWorkoutComponent implements OnInit, AfterViewInit {
   public authUserData$: Observable<AuthenticatedUser | undefined>;
   private user: PaxUser | undefined = undefined;
   public leaderboard: TopLeaderboardResponse[] = [];
+  public qLeaderboard: TopQLeaderboardResponse[] = [];
   public randomExercises: Exercise[] = [];
   public loadingLeaderboard: boolean = false;
+  public loadingQLeaderboard: boolean = false;
   public selectedTimeframe: 'week' | 'month' | 'year' = 'week';
+
   private readonly CACHE_KEY = 'weekly_exercises';
   private readonly CACHE_EXPIRY_KEY = 'weekly_exercises_expiry';
   private readonly WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
@@ -41,7 +43,7 @@ export class LogWorkoutComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
-    await this.loadLeaderboard();
+    await this.loadLeaderboards();
     await this.loadRandomExercises();
   }
 
@@ -50,8 +52,26 @@ export class LogWorkoutComponent implements OnInit, AfterViewInit {
     this.activeChallenges = await this.challengeManager.getActiveChallengesForUser(this.user.id);
   }
 
-  async loadLeaderboard() {
-    
+  async loadLeaderboards() {
+    this.loadingQLeaderboard = true;
+    this.loadingLeaderboard = true;
+
+    await this.loadAttendanceLeaderboard();
+    await this.loadQLeaderboard();
+  }
+
+  async loadQLeaderboard() {
+    try {
+      this.qLeaderboard = await this.statisticsService.getTop10QLeaderboard() || [];
+    } catch (error) {
+      console.error('Error loading Q leaderboard:', error);
+      this.qLeaderboard = [];
+    } finally {
+      this.loadingQLeaderboard = false;
+    }
+  }
+
+  async loadAttendanceLeaderboard() {
     const cached = this.leaderboardCache[this.selectedTimeframe];
     if (cached) {
       this.leaderboard = cached;
@@ -115,7 +135,7 @@ export class LogWorkoutComponent implements OnInit, AfterViewInit {
 
   async changeTimeframe(timeframe: 'week' | 'month' | 'year') {
     this.selectedTimeframe = timeframe;
-    await this.loadLeaderboard();
+    await this.loadAttendanceLeaderboard();
   }
 
   logWorkout() {

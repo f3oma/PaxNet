@@ -3,6 +3,11 @@ export interface TopLeaderboardResponse {
     posts: number;
 }
 
+export interface TopQLeaderboardResponse {
+    f3Name: string;
+    qCount: number;
+}
+
 export interface UserStatisticsResponse {
     totalPosts: {
         f3Name: string;

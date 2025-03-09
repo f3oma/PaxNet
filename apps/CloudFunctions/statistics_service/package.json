@@ -7,7 +7,7 @@
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
     "build": "tsc",
-    "deploy": "gcloud run deploy statisticsservice"
+    "deploy": "gcloud run deploy statisticsservice --source ."
   },
   "keywords": [],
   "author": "",

@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { TopLeaderboardResponse, TopSiteAttendanceResponse, UserStatisticsResponse } from "../models/statistics.model";
+import { TopLeaderboardResponse, TopQLeaderboardResponse, TopSiteAttendanceResponse, UserStatisticsResponse } from "../models/statistics.model";
 
 
 @Injectable({
@@ -23,6 +23,13 @@ export class StatisticsService {
         const leaderboardUrl = '/users/top-10-leaderboard';
         const finalUrl = this.baseUrl + leaderboardUrl;
         const leaders = await this.http.get<TopLeaderboardResponse[]>(finalUrl).toPromise();
+        return leaders;
+    }
+
+    async getTop10QLeaderboard(): Promise<TopQLeaderboardResponse[] | undefined> {
+        const qLeaderboardUrl = '/users/top-10-q-leaderboard-ytd';
+        const finalUrl = this.baseUrl + qLeaderboardUrl;
+        const leaders = await this.http.get<TopQLeaderboardResponse[]>(finalUrl).toPromise();
         return leaders;
     }
 
