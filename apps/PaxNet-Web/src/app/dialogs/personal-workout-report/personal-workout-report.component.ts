@@ -25,7 +25,7 @@ export interface UserReportedWorkoutProps {
 })
 export class PersonalWorkoutReportComponent {
   personalWorkoutReportForm: FormGroup = new FormGroup({
-    'activityType': new FormControl('f3Omaha'),
+    'activityType': new FormControl(''),
     'beatdown': new FormControl(''),
     'date': new FormControl(new Date()),
     'preActivity': new FormControl('None'),
