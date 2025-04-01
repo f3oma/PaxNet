@@ -49,7 +49,7 @@ export class BeatdownService {
 
     async getBeatdownsBetweenDates(startDate: Date, endDate: Date, filter: QueryFieldFilterConstraint[] | QueryCompositeFilterConstraint[]): Promise<Beatdown[]> {
         const beatdowns: Promise<Beatdown>[] = [];
-        const q = query(this.beatdownCollection, and(where("date", ">=", startDate), where("date", "<", endDate), ...filter), orderBy("date", "asc"));
+        const q = query(this.beatdownCollection, and(where("date", ">=", startDate), where("date", "<", endDate), or(...filter)), orderBy("date", "asc"));
         (await getDocs(q)).docs.forEach(async (d) => {
             beatdowns.push(d.data());
         });
@@ -58,7 +58,7 @@ export class BeatdownService {
 
     async getBeatdownsByAO(aoLocationRef: DocumentReference<AOData>, filters: QueryFieldFilterConstraint[]): Promise<Beatdown[]> {
         const beatdowns: Promise<Beatdown>[] = [];
-        const q = query(this.beatdownCollection, and(where("aoLocationRef", "==", aoLocationRef), where("date", ">=", new Date()), ...filters), orderBy("date", "asc"));
+        const q = query(this.beatdownCollection, and(where("aoLocationRef", "==", aoLocationRef), where("date", ">=", new Date()), or(...filters)), orderBy("date", "asc"));
         (await getDocs(q)).docs.forEach(async (d) => {
             beatdowns.push(d.data());
         })
