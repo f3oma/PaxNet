@@ -7,14 +7,30 @@ import { SupportTicketService } from 'src/app/services/support-ticket.service';
   selector: 'app-admin-tickets',
   template: `
     <div class="container mt-4">
-      <h2>Manage Support Tickets</h2>
+      <h2 class="mb-3">Manage Support Tickets</h2>
+      
+      <div class="filters">
+        <div class="form-check mb-3">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="showOpenOnly" 
+            [(ngModel)]="showOpenOnly" 
+            (change)="filterTickets()">
+          <label class="form-check-label" for="showOpenOnly">
+            Show Open Tickets Only
+          </label>
+        </div>
+      </div>
       <div class="list-group">
-        <div *ngFor="let ticket of tickets" class="list-group-item">
+        <div *ngFor="let ticket of filteredTickets" class="list-group-item">
           <div class="d-flex justify-content-between align-items-center">
             <div>
-              <h5 class="mb-1">Ticket ID: {{ticket.id}}</h5>
-              <p class="mb-1">{{ticket.description}}</p>
+              <h5 class="mb-2" style="font-size: 16px">Ticket ID: {{ticket.id}}</h5>
+              <p class="mb-2">{{ticket.description}}</p>
               <small>Created: {{ticket.createdAt | date}}</small>
+              <br>
+              <small>Submitted by: {{ticket.userId}}</small>
             </div>
             <div>
               <select 
@@ -42,12 +58,23 @@ import { SupportTicketService } from 'src/app/services/support-ticket.service';
   `
 })
 export class AdminTicketsComponent implements OnInit {
-  tickets: SupportTicket[] = [];
+  private tickets: SupportTicket[] = [];
+  showOpenOnly: boolean = false;
+  filteredTickets: SupportTicket[] = [];
 
   constructor(private supportTicketService: SupportTicketService) {}
 
   async ngOnInit() {
     this.tickets = await this.supportTicketService.getAllTickets();
+    this.filterTickets();
+  }
+
+  filterTickets() {
+    if (this.showOpenOnly) {
+      this.filteredTickets = this.tickets.filter(ticket => ticket.status === 'open');
+    } else {
+      this.filteredTickets = this.tickets;
+    }
   }
 
   async updateStatus(ticket: SupportTicket) {
