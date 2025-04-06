@@ -1,32 +1,93 @@
 .container {
-    padding: 16px 0;
+    padding: 16px;
 
     .header {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 16px;
+      
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+      }
+      
       .align-right {
         display: flex;
         gap: 12px;
         align-items: baseline;
+        
+        @media (max-width: 768px) {
+          flex-direction: column;
+          align-items: stretch;
+        }
       }
+      
       .column {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
         gap: 4px;
       }
+      
       #new-site {
         background-color: orange;
         color: #000;
         font-weight: bold;
+        white-space: nowrap;
       }
     }
+    
     h1 {
       margin-bottom: 4px;
       font-size: 32px;
       font-weight: bold;
+      
+      @media (max-width: 768px) {
+        font-size: 24px;
+      }
+    }
+
+    .map {
+      margin-bottom: 16px;
+      
+      iframe {
+        max-width: 100%;
+      }
+    }
+
+    .site-list {
+      width: 100%;
+      overflow-x: auto;
+      
+      table {
+        min-width: 100%;
+        
+        tr:nth-child(even) {
+          background-color: #f9f9f9;
+        }
+        
+        th, td {
+          white-space: nowrap;
+          
+          &:first-child {
+            padding-left: 16px;
+          }
+          
+          &:last-child {
+            padding-right: 16px;
+          }
+        }
+        
+        .mat-column-startTimeCST {
+          max-width: 200px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
     }
 
     .user-chip {
@@ -41,7 +102,7 @@
       color: #000;
       font-weight: 500;
       box-shadow: 0px 2px 5px #bbb;
-      margin: 4px 0;
+      margin: 8px 0;
     
       .current-profile-img {
         margin-right: 8px;
@@ -58,7 +119,7 @@
       .defaultBackground {
           background: #aaa;
       }
-  }
+    }
 
     .manage-my-site {
       margin: 12px 0;
@@ -71,6 +132,15 @@
       #manage-site-btn {
         background-color: #000;
         color: #fff;
+      }
+    }
+
+    .location-link {
+      text-decoration: underline;
+      color: darkorange;
+      cursor: pointer;
+      &:hover {
+        color: orange;
       }
     }
 }

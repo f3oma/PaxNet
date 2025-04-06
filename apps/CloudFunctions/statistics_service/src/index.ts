@@ -280,7 +280,7 @@ app.get('/users/top-10-q-leaderboard-ytd', async (req: Request, res: Response) =
   COUNT(DISTINCT a.document_id) AS qCount
 FROM f3omaha.firestore_beatdowns.beatdowns_schema_beatdown_schema_latest a
 JOIN f3omaha.firestore_users.users_raw_latest u on a.qUserRef = concat("users/", u.document_id)
-WHERE EXTRACT(YEAR FROM CURRENT_DATE()) = EXTRACT(YEAR FROM a.date)
+WHERE a.date BETWEEN TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), YEAR) AND CURRENT_TIMESTAMP()
 GROUP BY u.data
 ORDER BY COUNT(DISTINCT a.document_id) DESC
 LIMIT 10

@@ -1,16 +1,15 @@
-import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatSort, Sort } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentReference } from 'firebase/firestore';
 import { AOData } from 'src/app/models/ao.model';
-import { AuthenticatedUser, UserRole } from 'src/app/models/authenticated-user.model';
+import { UserRole } from 'src/app/models/authenticated-user.model';
 import { AOManagerService } from 'src/app/services/ao-manager.service';
+import { BeatdownService } from 'src/app/services/beatdown.service';
 import { PaxManagerService } from 'src/app/services/pax-manager.service';
 import { UserAuthenticationService } from 'src/app/services/user-authentication.service';
 import { UserProfileService } from 'src/app/services/user-profile.service';
-import { Badges } from 'src/app/utils/badges';
 
 @Component({
   selector: 'app-site-management',
@@ -21,8 +20,10 @@ export class SiteManagementComponent implements OnInit {
 
   isAdmin = false;
   siteQAO: AOData | undefined;
+  isIframe = false;
 
-  public displayedColumns: string[] = ['name', 'weekDay', 'startTimeCST', 'category', 'siteQ'];
+  public dateSort: string[] = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
+  public displayedColumns: string[] = ['weekDay', 'location', 'name', 'startTimeCST', 'category', 'siteQ'];
   public tableData: AOData[] = [];
   public dataSource: any;
 
@@ -32,8 +33,10 @@ export class SiteManagementComponent implements OnInit {
     private aoManagerService: AOManagerService, 
     private userAuthService: UserAuthenticationService,
     private paxManagementService: PaxManagerService,
+    private beatdownService: BeatdownService,
     private userProfileService: UserProfileService,
-    private router: Router) {
+    private router: Router,
+    private route: ActivatedRoute) {
 
     this.dataSource = null;
 
@@ -44,11 +47,23 @@ export class SiteManagementComponent implements OnInit {
           this.isAdmin = true;
         }
       }
-    })
+    });
+    
+    // Check if we're in an iframe
+    this.isIframe = this.checkIfInIframe();
   }
 
   async ngOnInit() {
     await this.getAOData();
+    
+    // Check for iframe parameter in query params
+    this.route.queryParams.subscribe(params => {
+      console.log(params);
+      if (params['iframe'] === 'true') {
+        console.log("HERE");
+        this.isIframe = true;
+      }
+    });
   }
 
   applyFilter(event: Event) {
@@ -57,47 +72,38 @@ export class SiteManagementComponent implements OnInit {
   }
 
   public async viewSiteDetail(row: AOData) {
-    await this.router.navigate(['sites', row.id]);
+    // Only navigate to site details if not in iframe mode
+    if (!this.isIframe) {
+      await this.router.navigate(['sites', row.id]);
+    }
+  }
+  
+  // Helper method to detect if running inside an iframe
+  private checkIfInIframe(): boolean {
+    try {
+      return window.self !== window.top;
+    } catch (e) {
+      return true;
+    }
   }
 
   async getSiteQAO(siteQLocationRef: DocumentReference<AOData>) {
     this.siteQAO = await this.aoManagerService.getDataByRef(siteQLocationRef);
   }
 
+  openGoogleMapsForAddress(address: string) {
+    const googleMapsBaseUrl = "https://www.google.com/maps/search/?api=1";
+    const addressUrl = googleMapsBaseUrl + '&query=' + encodeURIComponent(address);
+    window.open(addressUrl, "_blank");
+  }
+
   async getAOData() {
     const tableData = await this.aoManagerService.getAllBeatdownEligibleAOData();
-
-    // Uncomment to give rights to all site-qs
-    // for (let data of tableData) {
-    //   if (data.activeSiteQUsers) {
-    //     for (let user of data.activeSiteQUsers) {
-    //       const aoRef = this.aoManagerService.getAoLocationReference(`ao_data/${data.id}`);
-    //       const authRef = await this.userAuthService.getLinkedAuthDataRef(user.id);
-    //       if (authRef) {
-    //         await this.userAuthService.updateSiteQUserLocation(aoRef, authRef);
-    //         await this.userAuthService.promoteRole(UserRole.SiteQ, user.id);
-    //       }
-    //     }
-    //   }
-    //   if (data.retiredSiteQUsers) {
-    //     for (let user of data.retiredSiteQUsers) {
-    //       await this.userProfileService.addBadgeToProfile(Badges.RetiredSiteQ, user.id);
-    //       await this.userAuthService.promoteRole(UserRole.SiteQ, user.id);
-    //     }
-    //   }
-    //   if (data.foundingSiteQUsers) {
-    //     for (let user of data.foundingSiteQUsers) {
-    //       await this.userProfileService.addBadgeToProfile(Badges.SiteFounder, user.id);
-    //       await this.userAuthService.promoteRole(UserRole.SiteQ, user.id);
-    //     }
-    //   }
-    // }
   
     const dayMap = this.getDayMap();
     const sorted = tableData
       .filter((a) => a.weekDay !== null)
-      // .sort((a, b) => dayMap.get(a.weekDay) > dayMap.get(b.weekDay) ? 1 : -1);
-      .sort((a, b) => a.name > b.name ? 1 : -1);
+      .sort((a, b) => dayMap.get(a.weekDay) > dayMap.get(b.weekDay) ? 1 : -1);
 
     this.tableData = sorted;
     this.dataSource = new MatTableDataSource(this.tableData);

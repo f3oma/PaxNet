@@ -1,8 +1,7 @@
 <div class="container">
-    <div class="header">
+    <div class="header" *ngIf="!isIframe">
         <div class="column">
-            <h1>Site View</h1>
-            <p>F3 Omaha AO Directory</p>        
+            <h1>AO Directory</h1>
         </div>
         <div class="align-right">
             <button mat-flat-button id="new-site" *ngIf="isAdmin" [routerLink]="['/admin/add-location']">Add New Site</button>
@@ -13,19 +12,36 @@
         </div>
     </div>
 
+    <div class="map">
+        <iframe style="border: 1px solid #aaa;" src="https://map.f3nation.com/?lat=41.20537004419117&amp;lon=-96.10487293972588&amp;zoom=11" width="100%" height="550" frameborder="0"></iframe>
+    </div>
+
     <div class="site-list">
+        <mat-form-field *ngIf="isIframe" appearance="outline" style="width: 100%; margin: 10px 0;">
+            <mat-label>Search</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Name, category, start time" #input>
+        </mat-form-field>
+        
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
-            <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by name"> Name </th>
-                <td mat-cell *matCellDef="let site"> {{site.name}} </td>
-            </ng-container>
             <ng-container matColumnDef="weekDay">
                 <th mat-header-cell *matHeaderCellDef> Day </th>
                 <td mat-cell *matCellDef="let site"> {{site.weekDay}} </td>
             </ng-container>
+            <ng-container matColumnDef="location">
+                <th mat-header-cell *matHeaderCellDef> Location </th>
+                <td mat-cell *matCellDef="let site" (click)="openGoogleMapsForAddress(site.address); $event.stopPropagation()">
+                    <a class="location-link">
+                        {{site.location}}
+                    </a>
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by name"> Name </th>
+                <td mat-cell *matCellDef="let site"><b>{{site.name}}</b></td>
+            </ng-container>
             <ng-container matColumnDef="startTimeCST">
                 <th mat-header-cell *matHeaderCellDef> Start Time(s) </th>
-                <td mat-cell *matCellDef="let site"> {{site.startTimeCST}} </td>
+                <td mat-cell *matCellDef="let site" class="mat-column-startTimeCST" [title]="site.startTimeCST"> {{site.startTimeCST}} </td>
             </ng-container>
             <ng-container matColumnDef="category">
                 <th mat-header-cell *matHeaderCellDef> Category </th>
@@ -35,7 +51,11 @@
                 <th mat-header-cell *matHeaderCellDef> Site Q(s) </th>
                 <td mat-cell *matCellDef="let site">
                     <ng-container *ngFor="let siteQ of site.activeSiteQUsers">
-                        <div class="user-chip" [routerLink]="'/users/' + siteQ.id">
+                        <div *ngIf="!isIframe" class="user-chip" [routerLink]="'/users/' + siteQ.id" (click)="$event.stopPropagation()">
+                            <div class="current-profile-img" [style.background-image]="'url(' + siteQ.profilePhotoUrl + ')'" [ngClass]="{ 'defaultBackground': !siteQ.profilePhotoUrl }"></div>
+                            <span>{{siteQ.f3Name}}</span>
+                        </div>
+                        <div *ngIf="isIframe" class="user-chip non-clickable">
                             <div class="current-profile-img" [style.background-image]="'url(' + siteQ.profilePhotoUrl + ')'" [ngClass]="{ 'defaultBackground': !siteQ.profilePhotoUrl }"></div>
                             <span>{{siteQ.f3Name}}</span>
                         </div>
@@ -47,7 +67,7 @@
                 <td mat-cell *matCellDef="let site"> {{site.sector}} </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="viewSiteDetail(row)"></tr>
-          </table>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="viewSiteDetail(row)" [class.iframe-row]="isIframe"></tr>
+        </table>
     </div>
 </div>
