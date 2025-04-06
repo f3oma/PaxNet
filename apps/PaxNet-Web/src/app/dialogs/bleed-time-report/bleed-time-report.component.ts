@@ -9,7 +9,11 @@ import { MatDialogRef } from "@angular/material/dialog";
 export class BleedTimeReportDialog {
 
     form: FormGroup = new FormGroup({
-        bleedTime: new FormControl('', [Validators.required])
+        bleedTime: new FormControl('', [
+            Validators.required,
+            Validators.pattern(/^([0-5][0-9]):([0-5][0-9])$/),
+            this.validateTimeFormat
+        ])
     });
     
     constructor(
@@ -17,8 +21,28 @@ export class BleedTimeReportDialog {
     ) {       
     }
 
+    // Custom validator to ensure valid time format
+    validateTimeFormat(control: FormControl) {
+        if (!control.value) {
+            return null;
+        }
+
+        // Check if input matches MM:SS format with valid ranges
+        const match = control.value.match(/^([0-5][0-9]):([0-5][0-9])$/);
+        if (!match) {
+            return { invalidTimeFormat: true };
+        }
+
+        return null;
+    }
+
     onSubmit() {
-        this.dialogRef.close(this.form.value);
+        if (this.form.valid) {
+            this.dialogRef.close(this.form.value);
+        } else {
+            // Mark form fields as touched to trigger validation messages
+            this.form.markAllAsTouched();
+        }
     }
 
     onCancel() {
