@@ -3,6 +3,7 @@ export type Announcement = {
     description: string;
     backgroundColor: string;
     textColor: string;
+    isHidden: boolean;
 
     primaryActionUrl: string;
     primaryActionText: string;

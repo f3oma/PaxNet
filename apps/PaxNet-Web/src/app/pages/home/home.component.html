@@ -61,7 +61,7 @@
           </div>
         </div>
       </div>
-      <div class="announcements" *ngIf="announcements && announcements.length > 0">
+      <div class="announcements" *ngIf="announcements && announcements.length > 0 && shouldShowAnnouncements(announcements)" @fadeInOut>
         <h4>Announcements</h4>
         <div class="announcement" *ngFor="let announcement of announcements" @fadeInOut [style.background-color]="announcement.backgroundColor">
           <div class="info" [style.color]="announcement.textColor">

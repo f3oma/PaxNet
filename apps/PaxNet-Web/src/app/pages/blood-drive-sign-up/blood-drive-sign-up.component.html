@@ -90,7 +90,7 @@
                             </mat-cell>
                         </ng-container>
 
-                        <ng-container matColumnDef="bleedTime" *ngIf="this.shouldShowBleedTimeForm()">
+                        <ng-container matColumnDef="bleedTime">
                             <mat-header-cell *matHeaderCellDef mat-sort-header="bleedTime" start="asc"> Bleed Time </mat-header-cell>
                             <mat-cell *matCellDef="let element">
                                 {{ element.bleedTime || '' }}

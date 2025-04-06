@@ -5,7 +5,8 @@ export enum Challenges {
     SummerMurph2024 = "aI66pjf8m5wq5FBjGh4j",
     WinterWarrior2024 = "N7vPPQBYKo3irbzhjaHw",
     ThreeHundredChallenge = "iVJUt1cvLpE0mmigwo4s",
-    PreRuckRunChallenge = "igsId7cG26YjfI8OhVre"
+    PreRuckRunChallenge = "igsId7cG26YjfI8OhVre",
+    BloodDriveFeb2025 = "XN4RiFoTd45CNajF9qJm",
 }
 
 export interface ICompletionRequirements {}
@@ -86,6 +87,8 @@ export function getChallengeIdByName(challenge: Challenges): string | null  {
             return "iVJUt1cvLpE0mmigwo4s";
         case Challenges.PreRuckRunChallenge:
             return "igsId7cG26YjfI8OhVre";
+        case Challenges.BloodDriveFeb2025:
+            return "XN4RiFoTd45CNajF9qJm";
         default:
             return null;
     }
@@ -101,6 +104,8 @@ export function getChallengeImageByName(challengeInfoId: string): string | null 
             return "assets/images/challenges/three-hundred-challenge-2024.png";
         case Challenges.PreRuckRunChallenge:
             return "assets/images/challenges/the-griz-2025.png";
+        case Challenges.BloodDriveFeb2025:
+            return "assets/images/blood-droplet-achievement.png";
         default:
             return null;
     }

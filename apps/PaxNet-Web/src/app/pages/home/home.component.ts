@@ -182,6 +182,10 @@ export class HomeComponent {
     })
   }
 
+  shouldShowAnnouncements(announcement: Announcement[]): boolean {
+    return announcement.some((a) => !a.isHidden);
+  }
+  
   editAttendance(attendance: { beatdown: Beatdown, isReported: boolean, paxCount: number, fngCount: number }) {
     this.matDialog.open(CommunityWorkoutReportComponent, {
       data: <CommunityWorkoutReportProps> {

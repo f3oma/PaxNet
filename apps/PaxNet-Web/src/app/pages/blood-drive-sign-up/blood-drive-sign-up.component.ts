@@ -42,7 +42,7 @@ export class BloodDriveSignUpComponent {
     @ViewChild(MatSort) sort!: MatSort;
     public userEntry: BloodDriveEntry;
     public showEventNotFound: boolean = false;
-    displayedColumns: string[] = ['timeslot', 'f3Name', 'firstName', 'lastName'];
+    displayedColumns: string[] = ['timeslot', 'f3Name', 'firstName', 'lastName', 'bleedTime'];
     allEntries: BloodDriveEntry[];
     eventInformation: any;
     hideSignup: boolean = false;
@@ -75,7 +75,6 @@ export class BloodDriveSignUpComponent {
         );
 
         if (this.shouldShowBleedTimeForm()) {
-            this.displayedColumns.push('bleedTime');
             this.hideSignup = true;
         }
     }
