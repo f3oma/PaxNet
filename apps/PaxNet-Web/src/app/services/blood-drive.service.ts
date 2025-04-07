@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { collection, CollectionReference, deleteDoc, doc, Firestore, getDoc, getDocs, query, setDoc, updateDoc, where } from "@angular/fire/firestore";
+import { and, collection, CollectionReference, deleteDoc, doc, Firestore, getDoc, getDocs, query, setDoc, updateDoc, where } from "@angular/fire/firestore";
 import { BloodDriveEntry, BloodDriveEventInformation } from "../models/blood-drive.model";
 import { BloodDriveConverter } from "../utils/blood-drive.converter";
 import { PaxManagerService } from "./pax-manager.service";
@@ -30,9 +30,9 @@ export class BloodDriveService {
         await deleteDoc(ref);
     }
 
-    async getEntryByUser(id: string): Promise<BloodDriveEntry> {
+    async getEntryByUser(id: string, eventId: string): Promise<BloodDriveEntry> {
         const userRef = this.paxManagerService.getUserReference('/users/' + id);
-        const q = query(this.bloodDriveEntriesCollection, where("paxUserRef", "==", userRef))
+        const q = query(this.bloodDriveEntriesCollection, and(where("paxUserRef", "==", userRef), where("bloodDriveId", "==", eventId)))
         const docs = await getDocs(q);
         const entry = docs.docs.map((d) => {
             if (d.exists()) {

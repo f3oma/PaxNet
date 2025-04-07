@@ -96,7 +96,8 @@ export class BloodDriveSignUpComponent {
     async getPaxUserData(id: string) {
         this.paxUser = await (await this.paxManagerService.getDataByAuthId(id)).data();
         if (this.paxUser) {
-            this.userEntry = await this.bloodDriveService.getEntryByUser(this.paxUser!.id);
+            const eventId = this.route.snapshot.paramMap.get('id');
+            this.userEntry = await this.bloodDriveService.getEntryByUser(this.paxUser!.id, eventId!);
         }
     }
 
