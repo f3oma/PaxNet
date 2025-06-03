@@ -7,6 +7,21 @@
   li {
     list-style: none;
   }
+
+  .view-full-stats {
+    text-decoration: none;
+    padding: 8px 12px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #555;
+    }
+  }
   
   .months { grid-area: months; }
   .days { grid-area: days; }
@@ -58,10 +73,19 @@
     align-items: flex-start;
     width: 100%;
   }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     h2 {
       font-size: 18px;
       font-weight: bold;
     }
+  }
+  h2 {
+    font-size: 18px;
+    font-weight: bold;
+  }
 }
 
 .recent-activity-container {

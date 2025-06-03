@@ -3,7 +3,7 @@
         <div class="container" *ngIf="user" @profileAnimation>
             <div class="header">
                 <h2>{{user.f3Name}}'s Stats</h2>
-                <h4><b>2024 - Year in Review</b></h4>
+                <p>An overview of F3 activities and achievements</p>
             </div>
             <section id="my-stats">
                 <h3>Total Posts</h3>
@@ -17,19 +17,19 @@
                 <h3>Favorite days to post</h3>
                 <img [src]="favoriteDayOfWeekLink" />
                 <h3>Posted the most with</h3>
-                <ul class="users">
+                <ol class="users">
                     <li class="user" *ngFor="let user of userStatistics?.mostPostedWith">
                         <p><b>{{user.f3Name}}</b> - {{user.posts}} posts</p>
                     </li>
-                </ul>
+                </ol>
             </section>
             <section id="favorite-aos">
                 <h3>Favorite AOs</h3>
-                <ul class="aos">
+                <ol class="aos">
                     <li class="ao" *ngFor="let ao of userStatistics?.topSites">
                         <p><b>{{ao.aoName}}</b> - {{ao.posts}} posts</p>
                     </li>
-                </ul>
+                </ol>
             </section>
         </div>
     </div>
