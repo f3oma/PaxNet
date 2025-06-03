@@ -1,6 +1,6 @@
-<div class="banner">
+<!-- <div class="banner">
     <p><b>🎉 Try it out</b> - We're currently migrating blood drive sign-ups to PaxNet. If you notice any weird behavior, please report it!</p>
-</div>
+</div> -->
 <ng-container *ngIf="!showEventNotFound; else eventNotFound"></ng-container>
 <div class="loading" *ngIf="!loading; else loadingSpinner">
     <div class="auth" *ngIf="authUserData$ | async as authUser">

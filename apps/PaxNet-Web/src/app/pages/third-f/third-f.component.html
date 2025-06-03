@@ -13,35 +13,41 @@
                     <h4>Events</h4>
                     <p>For a list of all events, view F3 Omaha's <a target="_blank" href="https://f3omaha.com/events/category/3rdf/">Third F Calendar</a></p>
                 </div>
-                <div class="events">
-                    <div class="event">
+                <div class="events" *ngIf="activeEvents.length > 0">
+                    <!-- Active events -->
+                    <div class="event" *ngFor="let event of activeEvents" [routerLink]="'/blood-drive/' + event.id">
                         <div class="event-image">
                             <img height="75px" width="75px" src="/assets/images/blood-droplet-achievement.png" />
                         </div>
-                        <div class="event-details" [routerLink]="'/blood-drive/9OiYBqqyn9JggS0hK3rF'">
-                            <h5>April 2025 Blood Drive</h5>
-                            <p>Our quarterly blood drive through Nebraska Community Blood Bank. Compete with other PAX for the best blood draw time, win profile achievements. This event is on April 18th, 2025.</p>
-                            <span style="font-weight: bold;">Sign up now!</span>
+                        <div class="event-details">
+                            <h5>{{event.name}}</h5>
+                            <p>{{truncateDescription(event.description)}}</p>
+                            <span style="font-weight: bold; color: #3c68b1;">Sign up now!</span>
                         </div>
                     </div>
                 </div>
+                <!-- No events message -->
+                <p *ngIf="activeEvents.length === 0">No upcoming events scheduled.</p>
             </div>
             <div class="section">
                 <div class="section-head">
                     <h4>Previous Events</h4>
                 </div>
-                <div class="events">
-                    <div class="event">
+                <div class="events" *ngIf="pastEvents.length > 0">
+                    <!-- Past events -->
+                    <div class="event" *ngFor="let event of pastEvents" [routerLink]="'/blood-drive/' + event.id">
                         <div class="event-image">
                             <img height="75px" width="75px" src="/assets/images/blood-droplet-achievement.png" />
                         </div>
-                        <div class="event-details" [routerLink]="'/blood-drive/XN4RiFoTd45CNajF9qJm'">
-                            <h5>February 2025 Blood Drive</h5>
-                            <p>Our quarterly blood drive through Nebraska Community Blood Bank. Compete with other PAX for the best blood draw time, win profile achievements.</p>
-                            <span style="font-weight: bold;">Event Completed</span>
+                        <div class="event-details">
+                            <h5>{{event.name}}</h5>
+                            <p>{{truncateDescription(event.description)}}</p>
+                            <span style="font-weight: bold; color: #666;">Event Completed</span>
                         </div>
                     </div>
                 </div>
+                <!-- No previous events message -->
+                <p *ngIf="pastEvents.length === 0">No previous events found.</p>
             </div>
         </div> 
     </div>

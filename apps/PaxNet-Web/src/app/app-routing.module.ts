@@ -32,6 +32,7 @@ import { LogWorkoutComponent } from './pages/log-workout/log-workout.component';
 import { CreateTicketComponent } from './components/support/create-ticket/create-ticket.component';
 import { MyTicketsComponent } from './components/support/my-tickets/my-tickets.component';
 import { AdminTicketsComponent } from './components/support/admin/admin-tickets.component';
+import { BloodDriveCreatorComponent } from './pages/admin-home/blood-drive-creator/blood-drive-creator.component';
 
 const routes: Routes = [
   {
@@ -179,6 +180,11 @@ const routes: Routes = [
         component: AdminUserDetailComponent,
         canActivate: [AdminRoleAuthGuard]
       },
+      {
+        path: 'blood-drive-creator',
+        component: BloodDriveCreatorComponent,
+        canActivate: [AdminRoleAuthGuard]
+      }
     ]
   },
   {
@@ -193,7 +199,7 @@ const routes: Routes = [
         canActivate: [AdminRoleAuthGuard]
       }
     ]
-  }
+  },
 ];
 
 @NgModule({

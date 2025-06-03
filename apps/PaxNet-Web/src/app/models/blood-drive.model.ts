@@ -18,10 +18,11 @@ export type BloodDriveEntryEntity = {
 }
 
 export type BloodDriveEventInformation = {
-    id: string;
+    id?: string;
     lastDateToRegister: string;
     name: string;
     description: string;
     eventHost: string;
     address: string;
+    eventDate: string;
 }

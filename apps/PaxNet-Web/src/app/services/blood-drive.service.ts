@@ -17,6 +17,13 @@ export class BloodDriveService {
         this.bloodDriveEventInformationCollection = collection(this.firestore, 'blood_drive_event_information');
     }
 
+    async addBloodDriveEventInformation(eventInformation: BloodDriveEventInformation): Promise<BloodDriveEventInformation> {
+        const docRef = doc(this.bloodDriveEventInformationCollection);
+        eventInformation.id = docRef.id;
+        await setDoc(docRef, eventInformation);
+        return eventInformation;
+    }
+
     async addEntry(bloodDriveEntry: BloodDriveEntry): Promise<BloodDriveEntry> {
         const docRef = doc(this.bloodDriveEntriesCollection);
         bloodDriveEntry.id = docRef.id;
@@ -61,5 +68,10 @@ export class BloodDriveService {
     async setBleedTimeForEntry(entryId: string, bleedTime: string) {
         const ref = doc(this.bloodDriveEntriesCollection, entryId);
         await updateDoc(ref, { bleedTime: bleedTime });
+    }
+
+    async getAllBloodDriveEvents(): Promise<BloodDriveEventInformation[]> {
+        const snapshot = await getDocs(this.bloodDriveEventInformationCollection);
+        return snapshot.docs.map(doc => doc.data() as BloodDriveEventInformation);
     }
 }

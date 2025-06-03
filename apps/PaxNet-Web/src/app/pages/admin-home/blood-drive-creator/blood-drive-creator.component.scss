@@ -1,0 +1,31 @@
+.container {
+    padding: 16px;
+
+    h1 {
+      margin-bottom: 4px;
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .blood-drive-form {
+        padding: 16px 0;
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        #submit {
+            background-color: #ff5c5c;
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            width: 100%;
+            border: none;
+            padding: 10px;
+
+            &:hover {
+                background-color: #e04e4e;
+            }
+        }
+    }
+}

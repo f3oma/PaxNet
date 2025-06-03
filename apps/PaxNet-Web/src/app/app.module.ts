@@ -83,6 +83,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { AdminTicketsComponent } from './components/support/admin/admin-tickets.component';
 import { CreateTicketComponent } from './components/support/create-ticket/create-ticket.component';
 import { MyTicketsComponent } from './components/support/my-tickets/my-tickets.component';
+import { BloodDriveCreatorComponent } from './pages/admin-home/blood-drive-creator/blood-drive-creator.component';
 
 @NgModule({
   declarations: [
@@ -136,7 +137,8 @@ import { MyTicketsComponent } from './components/support/my-tickets/my-tickets.c
     BleedTimeReportDialog,
     AdminTicketsComponent,
     CreateTicketComponent,
-    MyTicketsComponent
+    MyTicketsComponent,
+    BloodDriveCreatorComponent
   ],
   imports: [
     BrowserModule,
