@@ -11,7 +11,7 @@ import { BeatdownService } from 'src/app/services/beatdown.service';
 import { ChallengeManager } from 'src/app/services/challenge-manager.service';
 import { WeatherService } from 'src/app/services/weather-api.service';
 import { WorkoutManagerService } from 'src/app/services/workout-manager.service';
-import { Challenges, preRunRuckChallengeHelper, winterWarriorChallengeHelper } from 'src/app/utils/challenges';
+import { Challenges, preRunRuckChallengeHelper, summerMurphChallengeHelper, winterWarriorChallengeHelper } from 'src/app/utils/challenges';
 
 export interface UserReportedWorkoutProps {
   user: PaxUser,
@@ -33,6 +33,10 @@ export class PersonalWorkoutReportComponent {
     'totalMiles': new FormControl(0),
     'workoutCategory': new FormControl('None'),
     'workoutDifficulty': new FormControl('light'),
+
+    /// Murph challenge
+    'totalMurphs': new FormControl(0),
+
     'notes': new FormControl(''),
   });
 
@@ -119,6 +123,13 @@ export class PersonalWorkoutReportComponent {
           const completedTotal = this.getNumberOfMilesPreRan();
           await preRunRuckChallengeHelper(challenge, completedTotal, this.challengeManager);
         }
+
+        if (challenge.challengeInfoId === Challenges.SummerMurph2025 && 
+          activityType !== "personal" &&
+          new Date(challenge.startDateString) < new Date()) {
+            const completedMurphs = this.personalWorkoutReportForm.controls['totalMurphs'].value;
+            await summerMurphChallengeHelper(challenge, this.challengeManager, completedMurphs);
+        }
       }
     }
 
@@ -134,6 +145,12 @@ export class PersonalWorkoutReportComponent {
     }
   
     return false;
+  }
+
+  isEligibleForMurphChallenge(): boolean {
+    return this.activeChallenges.some(challenge =>
+      challenge.challengeInfoId === Challenges.SummerMurph2025 &&
+      new Date(challenge.startDateString) < new Date());
   }
 
   private getNumberOfMilesPreRan(): number {

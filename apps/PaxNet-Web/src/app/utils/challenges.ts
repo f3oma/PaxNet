@@ -7,6 +7,7 @@ export enum Challenges {
     ThreeHundredChallenge = "iVJUt1cvLpE0mmigwo4s",
     PreRuckRunChallenge = "igsId7cG26YjfI8OhVre",
     BloodDriveFeb2025 = "XN4RiFoTd45CNajF9qJm",
+    SummerMurph2025 = "SNf0fBTPChe6OZ6hQWCK",
 }
 
 export interface ICompletionRequirements {}
@@ -72,6 +73,15 @@ export function getUserSelectedGoalOptionsByName(challengeId: string): UserSelec
                 name: "Gold - 80mi",
                 value: 80
             }];
+        case Challenges.SummerMurph2025:
+            return [{
+                name: "12 Murphs",
+                value: 12
+            },
+            {
+                name: "24 Murphs",
+                value: 24
+            }]
         default:
             return [];
     }
@@ -89,6 +99,8 @@ export function getChallengeIdByName(challenge: Challenges): string | null  {
             return "igsId7cG26YjfI8OhVre";
         case Challenges.BloodDriveFeb2025:
             return "XN4RiFoTd45CNajF9qJm";
+        case Challenges.SummerMurph2025:
+            return "SNf0fBTPChe6OZ6hQWCK";
         default:
             return null;
     }
@@ -106,6 +118,8 @@ export function getChallengeImageByName(challengeInfoId: string): string | null 
             return "assets/images/challenges/the-griz-2025.png";
         case Challenges.BloodDriveFeb2025:
             return "assets/images/blood-droplet-achievement.png";
+        case Challenges.SummerMurph2025:
+            return "assets/images/challenges/murph-challenge-2025.png";
         default:
             return null;
     }
@@ -145,6 +159,29 @@ export async function winterWarriorChallengeHelper(challenge: BaseChallenge, cha
 
 export async function preRunRuckChallengeHelper(challenge: BaseChallenge, completedTotal: number, challengeManager: ChallengeManager) {
     if (challenge.type === ChallengeType.UserSelectedGoal && challenge.challengeInfoId === Challenges.PreRuckRunChallenge && new Date(challenge.startDateString) < new Date()) {
+        const userSelectedGoalChallenge = challenge as UserSelectedGoalChallenge;
+        const alreadyCompleted = userSelectedGoalChallenge.state === ChallengeState.Completed;
+
+        if (userSelectedGoalChallenge.state !== ChallengeState.Completed && (userSelectedGoalChallenge.state === ChallengeState.NotStarted || userSelectedGoalChallenge.state === ChallengeState.PreRegistered))
+            userSelectedGoalChallenge.updateState(ChallengeState.InProgress);
+
+        const newValue = Math.round((userSelectedGoalChallenge.currentValue + completedTotal) * 100) / 100;
+        userSelectedGoalChallenge.updateValue(newValue);
+
+        if (userSelectedGoalChallenge.isComplete() && !alreadyCompleted) {
+            await challengeManager.completeChallenge(userSelectedGoalChallenge);
+            return;
+        }
+
+        await challengeManager.updateChallenge(userSelectedGoalChallenge);
+    }
+}
+
+export async function summerMurphChallengeHelper(challenge: BaseChallenge, challengeManager: ChallengeManager, completedTotal: number) {
+    if (challenge.type === ChallengeType.UserSelectedGoal && 
+        challenge.challengeInfoId === Challenges.SummerMurph2025 &&
+        new Date(challenge.startDateString) < new Date()) {
+
         const userSelectedGoalChallenge = challenge as UserSelectedGoalChallenge;
         const alreadyCompleted = userSelectedGoalChallenge.state === ChallengeState.Completed;
 
