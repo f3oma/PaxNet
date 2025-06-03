@@ -116,10 +116,10 @@ export class HomeComponent {
     // }
 
     // Remove last times
-    localStorage.removeItem('showChallengeAnnouncement');
+    localStorage.removeItem('showWinterWarriorChallengeAnnouncement');
 
     // Remove banner if user closed it
-    let localStorageChallengeBannerPreference = localStorage.getItem('showWinterWarriorChallengeAnnouncement');
+    let localStorageChallengeBannerPreference = localStorage.getItem('showSummerMurphChallengeAnnouncement');
     if (localStorageChallengeBannerPreference !== null && localStorageChallengeBannerPreference === 'false') {
       showChallengeBanner = false;
     }
@@ -209,7 +209,7 @@ export class HomeComponent {
   }
 
   closeChallengeAnnouncement() {
-    localStorage.setItem('showWinterWarriorChallengeAnnouncement', 'false');
+    localStorage.setItem('showSummerMurphChallengeAnnouncement', 'false');
     this.showChallengeBanner = false;
   }
 
