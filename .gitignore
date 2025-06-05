@@ -8,3 +8,4 @@ dist/
 .angular
 apps/**/dist/
 .DS_Store
+pnpm-lock.yaml
