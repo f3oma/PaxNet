@@ -16,7 +16,7 @@ export class PaxSearchService {
 
   /**
    * @param f3Name Name provided to PAX at join time
-   * @returns Whether the F3 name exists in the F3 Omaha system
+   * @returns Whether the F3 name exists in the F3 system
    */
   public async doesF3NameExist(f3Name: string): Promise<boolean> {
     return this.idx.search(f3Name, {

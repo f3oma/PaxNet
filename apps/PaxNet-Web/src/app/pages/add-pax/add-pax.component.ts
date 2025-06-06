@@ -145,7 +145,7 @@ export class AddPaxComponent implements AfterViewInit {
         const newUserAdded = await this.paxManagerService.addNewUser(pax);
         await this.paxWelcomeEmailService.sendWelcomeEmailToPax(newUserAdded.id, pax.f3Name!);
         if (newUserAdded && newUserAdded.id) {
-          window.alert(`Welcome to F3 Omaha, ${this.form.controls['f3Name'].value}!`);
+          window.alert(`Welcome to F3, ${this.form.controls['f3Name'].value}!`);
           this.router.navigate(['home']);
         } else {
           console.error("Error in adding user", newUserAdded);

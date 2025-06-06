@@ -4,7 +4,7 @@
   "authors": [
     "Nolan Clark - F3 iMac"
   ],
-  "description": "F3 Omaha's internal PAX Network",
+  "description": "F3 Internal PAX Network",
   "license": "ISC",
   "scripts": {
     "ng": "ng",

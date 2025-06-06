@@ -1,6 +1,6 @@
 <div class="container" *ngIf="authUserData$ | async as authUser">
     <div class="loading" *ngIf="!loading; else loadingSpinner">
-        <h1>F3 Omaha Exicon</h1>
+        <h1>Exicon</h1>
         <p>Exercise names and their descriptions</p>
         <div class="exercise-list" *ngIf="paxUserData$ | async as pax">
             <p class="approvalMessage" *ngIf="showApprovalMessage">{{approvalMessage}}</p>

@@ -22,7 +22,7 @@ export class BeatdownSearchService {
         today.setHours(23, 59, 59, 999);
         const todayTimestamp = Math.floor(Timestamp.fromDate(today).toMillis());
         const sixDaysAway = new Date();
-        sixDaysAway.setDate(today.getDate() - 6);
+        sixDaysAway.setDate(today.getDate() - 7);
         sixDaysAway.setHours(0, 0, 0, 0);
         const yesterdayTimestamp = Math.ceil(Timestamp.fromDate(sixDaysAway).toMillis());
 

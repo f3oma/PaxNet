@@ -9,7 +9,7 @@
     "deploy": "gcloud functions deploy beatdown_autofill --gen2 --runtime=nodejs20 --region=us-central1 --source=. --entry-point=beatdown_autofill --trigger-http --project=f3omaha"
   },
   "keywords": [
-    "F3 Omaha"
+    "F3"
   ],
   "private": true,
   "author": "Nolan Clark - iMac",
