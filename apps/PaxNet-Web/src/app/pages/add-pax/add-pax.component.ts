@@ -103,8 +103,6 @@ export class AddPaxComponent implements AfterViewInit {
         let ehRef: UserRef = null;
         if (ehedBy) {
           ehRef = this.paxManagerService.getUserReference(ehedBy.userRef);
-          const userEhId = ehedBy.userRef.replace('users/', '');
-          await this.userProfileService.updateUsersEHTree(userEhId);
         }
   
         const location = this.form.controls['ehLocation'].value;
@@ -143,8 +141,15 @@ export class AddPaxComponent implements AfterViewInit {
         // zipcode: this.form.controls['zipcode'].value,
       
         const newUserAdded = await this.paxManagerService.addNewUser(pax);
-        await this.paxWelcomeEmailService.sendWelcomeEmailToPax(newUserAdded.id, pax.f3Name!);
         if (newUserAdded && newUserAdded.id) {
+          await this.paxWelcomeEmailService.sendWelcomeEmailToPax(newUserAdded.id, pax.f3Name!);
+          
+          // Update the EH Tree for the EHing user after new user is added
+          if (ehedBy) {
+            const userEhId = ehedBy.userRef.replace('users/', '');
+            await this.userProfileService.updateUsersEHTree(userEhId);
+          }
+
           window.alert(`Welcome to F3, ${this.form.controls['f3Name'].value}!`);
           this.router.navigate(['home']);
         } else {

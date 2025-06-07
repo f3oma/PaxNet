@@ -143,6 +143,11 @@ const routes: Routes = [
     ]
   },
   {
+    path: 'scheduler',
+    component: QSchedulerComponent,
+    canActivate: [SiteQMinimumRoleAuthGuard]
+  },
+  {
     path: 'admin',
     canActivate: [SiteQMinimumRoleAuthGuard],
     children: [
@@ -151,19 +156,14 @@ const routes: Routes = [
         component: AdminHomeComponent,
       },
       {
-        path: 'q-scheduler',
-        component: QSchedulerComponent,
-        canActivate: [SiteQMinimumRoleAuthGuard]
-      },
-      {
         path: 'exicon-approval',
         component: ExiconApprovalComponent,
-        canActivate: [SiteQMinimumRoleAuthGuard]
+        canActivate: [AdminRoleAuthGuard]
       },
       {
         path: 'add-location',
         component: AddNewSiteComponent,
-        canActivate: [SiteQMinimumRoleAuthGuard]
+        canActivate: [AdminRoleAuthGuard]
       },
       {
         path: 'pax-list',

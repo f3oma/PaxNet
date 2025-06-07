@@ -23,7 +23,7 @@
           <button *ngIf="hasClaimedData" mat-button class="action-btn" [routerLink]="['/add-pax']">Add an FNG <mat-icon>person_add</mat-icon></button>
           <button mat-button class="action-btn" [routerLink]="['/weekly-schedule']"><mat-icon>list</mat-icon>Weekly Q Schedule</button>
           <button *ngIf="hasClaimedData && !loadingChallenges" mat-button class="action-btn" (click)="reportAttendance()"><mat-icon>directions_run</mat-icon>Log Workout</button>
-          <button *ngIf="hasClaimedData && isAdminOrSiteQ" mat-button class="action-btn q-schedule-btn" [routerLink]="['/admin/q-scheduler']"><mat-icon>calendar_month</mat-icon> Q-Scheduler</button>
+          <button *ngIf="hasClaimedData && isAdminOrSiteQ" mat-button class="action-btn q-schedule-btn" [routerLink]="['/scheduler']"><mat-icon>calendar_month</mat-icon> Q-Scheduler</button>
       </div>
       <div class="attendance-report-required" *ngIf="hasClaimedData && beatdownsRequiringAttendanceData && beatdownsRequiringAttendanceData.length > 0" @fadeInOut>
         <h4 class="report-attendance-header">Report Beatdown Attendance</h4>

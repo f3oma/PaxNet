@@ -1,17 +1,14 @@
 <div class="container">
-    <h1>PaxMan - Admin Tools</h1>
-    <p>Internal Pax Management Tools</p>
-    <div class="section">
-        <h3>Site-Q Tools</h3>
-        <a mat-flat-button [routerLink]="['/admin/q-scheduler']">Q-Scheduler</a>
-        <a mat-flat-button [routerLink]="['/sites']">Manage AO Data</a>
-    </div>
+    <h1>Admin Tools</h1>
+    <p>Internal PAX Management Tools</p>
     <div class="section" *ngIf="isAdmin">
-        <h3>Admin Tools</h3>
-        <a mat-flat-button (click)="downloadUserRoster()">Download Entire Roster CSV</a>
-        <a mat-flat-button [routerLink]="['/admin/user-data-edit']">Admin Pax Data Edit</a>
-        <a mat-flat-button [routerLink]="['/admin/exicon-approval']">Exicon Approval</a>
-        <a mat-flat-button [routerLink]="['/support/admin']">Support Tickets</a>
-        <a mat-flat-button [routerLink]="['/admin/blood-drive-creator']">Blood Drive Creator</a>
+        <div class="tools">
+            <h3>Admin Tools</h3>
+            <a mat-flat-button (click)="downloadUserRoster()">Download Entire Roster CSV</a>
+            <a mat-flat-button [routerLink]="['/admin/user-data-edit']">Admin Pax Data Edit</a>
+            <a mat-flat-button [routerLink]="['/admin/exicon-approval']">Exicon Approval</a>
+            <a mat-flat-button [routerLink]="['/support/admin']">Support Tickets</a>
+            <a mat-flat-button [routerLink]="['/admin/blood-drive-creator']">Blood Drive Creator</a>
+        </div>
     </div>
 </div>
