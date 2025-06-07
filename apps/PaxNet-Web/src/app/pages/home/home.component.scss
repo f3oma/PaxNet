@@ -285,6 +285,11 @@
     }
   }
 
+.recent-pax-list {
+  max-height: 550px;
+  overflow-y: scroll;
+}
+
 .header {
   display: flex;
   flex-direction: row;
